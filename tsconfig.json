@@ -23,6 +23,12 @@
       ],
       "@prisma/*": [
         "src/prisma/*"
+      ],
+      "@user": [
+        "src/user"
+      ],
+      "@user/*": [
+        "src/user/*"
       ]
     }
   }
