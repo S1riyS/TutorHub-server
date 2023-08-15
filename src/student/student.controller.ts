@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { CreateStudentProfileDTO, UpdateStudentProfileDTO } from './dto';
 
@@ -6,18 +6,18 @@ import { CreateStudentProfileDTO, UpdateStudentProfileDTO } from './dto';
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
-  @Get(':userId')
+  @Get(':userId/profile')
   findOne(@Param('userId', ParseUUIDPipe) userId: string) {
-    return this.studentService.findOne(userId);
+    return this.studentService.findOneProfile(userId);
   }
 
-  @Post(':userId')
+  @Post(':userId/profile')
   createProfile(@Param('userId', ParseUUIDPipe) userId: string, @Body() createStudentDto: CreateStudentProfileDTO) {
-    return this.studentService.create(userId, createStudentDto);
+    return this.studentService.createProfile(userId, createStudentDto);
   }
 
-  @Patch(':userId')
+  @Put(':userId/profile')
   updateProfile(@Param('userId', ParseUUIDPipe) userId: string, @Body() updateStudentDto: UpdateStudentProfileDTO) {
-    return this.studentService.update(userId, updateStudentDto);
+    return this.studentService.updateProfile(userId, updateStudentDto);
   }
 }
