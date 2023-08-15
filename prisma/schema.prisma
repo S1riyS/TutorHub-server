@@ -15,7 +15,7 @@ model User {
   firstName   String  @map("first_name")
   lastName    String  @map("last_name")
   middleName  String  @map("middle_name")
-  phoneNumber String  @map("phone_number")
+  phoneNumber String  @unique @map("phone_number")
   imageLink   String? @map("image_link")
 
   role Role
