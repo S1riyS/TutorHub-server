@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put,
+  UseInterceptors,
+} from '@nestjs/common';
 import { TutorService } from './tutor.service';
 import {
   CreateEducationDTO,
@@ -8,6 +18,7 @@ import {
   UpdateExperienceDTO,
   UpdateTutorProfileDTO,
 } from './dto';
+import { EducationResponse, ExperienceResponse } from './responses';
 
 @Controller('tutors')
 export class TutorController {
@@ -29,30 +40,38 @@ export class TutorController {
   }
 
   @Post(':userId/education')
+  @UseInterceptors(ClassSerializerInterceptor)
   async createEducation(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateEducationDTO) {
-    return this.tutorService.createEducation(userId, dto);
+    const educationRecord = await this.tutorService.createEducation(userId, dto);
+    return new EducationResponse(educationRecord);
   }
 
   @Put(':userId/education/:educationId')
+  @UseInterceptors(ClassSerializerInterceptor)
   async updateEducation(
     @Param('userId', ParseUUIDPipe) userId: string,
     @Param('educationId', ParseUUIDPipe) educationId: string,
     @Body() dto: UpdateEducationDTO,
   ) {
-    return this.tutorService.updateEducation(userId, educationId, dto);
+    const updatedEducationRecord = await this.tutorService.updateEducation(userId, educationId, dto);
+    return new EducationResponse(updatedEducationRecord);
   }
 
   @Post(':userId/experience')
+  @UseInterceptors(ClassSerializerInterceptor)
   async createExperience(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateExperienceDTO) {
-    return this.tutorService.createExperience(userId, dto);
+    const experienceRecord = await this.tutorService.createExperience(userId, dto);
+    return new ExperienceResponse(experienceRecord);
   }
 
   @Put(':userId/experience/:experienceId')
+  @UseInterceptors(ClassSerializerInterceptor)
   async updateExperience(
     @Param('userId', ParseUUIDPipe) userId: string,
     @Param('experienceId', ParseUUIDPipe) experienceId: string,
     @Body() dto: UpdateExperienceDTO,
   ) {
-    return this.tutorService.updateExperience(userId, experienceId, dto);
+    const updatedExperienceRecord = await this.tutorService.updateExperience(userId, experienceId, dto);
+    return new ExperienceResponse(updatedExperienceRecord);
   }
 }
