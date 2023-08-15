@@ -1,4 +1,4 @@
-import { IsArray, IsDate, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { TeachingFormat } from '@prisma/client';
 import { PartialType } from '@nestjs/swagger';
 
@@ -6,10 +6,10 @@ export class CreateTutorProfileDTO {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  bio: string;
+  bio?: string;
 
   @IsNotEmpty()
-  @IsDate()
+  @IsDateString()
   birthDate: Date;
 
   @IsArray()
