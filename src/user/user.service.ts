@@ -1,34 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
 import { User } from '@prisma/client';
 import { genSalt, hash } from 'bcrypt';
+import { CreateUserDTO, UpdateUserDTO } from '@user/dto';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async save(user: Partial<User>): Promise<User> {
+  async create(user: CreateUserDTO): Promise<User> {
+    const candidate = await this.findOne(user.email);
+    if (candidate) throw new BadRequestException('User with this credentials already exists');
+
     const hashedPassword = await this.hashPassword(user.password);
-    return this.prisma.user.upsert({
+    return this.prisma.user.create({
+      data: {
+        ...user,
+        password: hashedPassword,
+      },
+    });
+  }
+
+  async update(id: string, user: UpdateUserDTO): Promise<User> {
+    const candidate = await this.findOne(id);
+    if (!candidate) throw new NotFoundException('User not found');
+
+    return this.prisma.user.update({
       where: {
-        email: user.email,
+        id: id,
       },
-      update: {
-        email: user.email,
-        password: hashedPassword,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        middleName: user.middleName,
-        phoneNumber: user.phoneNumber,
-      },
-      create: {
-        email: user.email,
-        password: hashedPassword,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        middleName: user.middleName,
-        phoneNumber: user.phoneNumber,
-        role: user.role,
+      data: {
+        ...user,
       },
     });
   }

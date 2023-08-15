@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Put } from '@nestjs/common';
 import { UserService } from '@user/user.service';
-import { User } from '@prisma/client';
+import { UpdateUserDTO } from '@user/dto';
 
 @Controller('users')
 export class UserController {
@@ -12,8 +12,8 @@ export class UserController {
   }
 
   @Put(':id')
-  async update(@Param('id', ParseUUIDPipe) id: string, @Body() user: Partial<User>) {
-    return this.userService.save(user);
+  async update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateUserDTO) {
+    return this.userService.update(id, dto);
   }
 
   @Delete(':id')
