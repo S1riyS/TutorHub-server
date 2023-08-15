@@ -1,4 +1,5 @@
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
 
 export class CreateExperienceDTO {
   @IsNotEmpty()
@@ -13,3 +14,5 @@ export class CreateExperienceDTO {
   @IsInt()
   endYear: number;
 }
+
+export class UpdateExperienceDTO extends PartialType(CreateExperienceDTO) {}

@@ -1,5 +1,6 @@
 import { IsArray, IsDate, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { TeachingFormat } from '@prisma/client';
+import { PartialType } from '@nestjs/swagger';
 
 export class CreateTutorProfileDTO {
   @IsOptional()
@@ -20,5 +21,4 @@ export class CreateTutorProfileDTO {
   careerStartYear: number;
 }
 
-// TODO: add PartialType
-// export class UpdateTutorProfileDTO extends PartialType(CreateTutorProfileDTO) {}
+export class UpdateTutorProfileDTO extends PartialType(CreateTutorProfileDTO) {}
