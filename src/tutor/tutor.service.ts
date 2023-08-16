@@ -204,7 +204,7 @@ export class TutorService {
         tutorProfileId: profileId,
       },
     });
-    if (!achievement) throw new BadRequestException('This tutor does not have such an achievement');
+    if (!achievement) throw new NotFoundException('This tutor does not have such an achievement');
     return achievement;
   }
 }
