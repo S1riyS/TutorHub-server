@@ -26,9 +26,11 @@ export class ProfileResponse implements FullTutorProfile {
   teachingFormats: $Enums.TeachingFormat[];
 
   @Type(() => EducationResponse)
+  @ApiProperty({ type: [EducationResponse] })
   education: EducationResponse[];
 
   @Type(() => ExperienceResponse)
+  @ApiProperty({ type: [ExperienceResponse] })
   experience: ExperienceResponse[];
 
   @Exclude()

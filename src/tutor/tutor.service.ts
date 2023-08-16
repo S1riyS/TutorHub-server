@@ -107,7 +107,7 @@ export class TutorService {
         },
       })
       .catch(() => {
-        throw new BadRequestException('Could not update this education record');
+        throw new BadRequestException('This tutor does not have such a record');
       });
   }
 
@@ -144,7 +144,7 @@ export class TutorService {
         },
       })
       .catch(() => {
-        throw new BadRequestException('Could not update this experience record');
+        throw new BadRequestException('This tutor does not have such a record');
       });
   }
 }

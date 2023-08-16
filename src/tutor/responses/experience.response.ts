@@ -15,7 +15,7 @@ export class ExperienceResponse implements TutorExperince {
   @ApiProperty({ example: 2022 })
   endYear: number | null;
 
-  @ApiProperty({ example: true })
+  @ApiProperty({ example: false })
   isConfirmed: boolean;
 
   @Exclude()
