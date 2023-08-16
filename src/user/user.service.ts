@@ -45,6 +45,10 @@ export class UserService {
     return user;
   }
 
+  async findAll(): Promise<User[]> {
+    return this.prisma.user.findMany();
+  }
+
   async delete(id: string): Promise<{ [id: string]: string }> {
     //   TODO: add check if user tries to delete himself of it is admin
     return this.prisma.user.delete({

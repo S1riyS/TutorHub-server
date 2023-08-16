@@ -12,11 +12,18 @@ import {
 import { UserService } from '@user/user.service';
 import { UpdateUserDTO } from '@user/dto';
 import { UserResponse } from '@user/responses';
+import { User } from '@prisma/client';
 
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get()
+  async findAll() {
+    const users = await this.userService.findAll();
+    return users.map((user: User) => new UserResponse(user));
+  }
 
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
