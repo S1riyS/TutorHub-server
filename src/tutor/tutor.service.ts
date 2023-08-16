@@ -1,17 +1,8 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
 import { UserService } from '@user/user.service';
-import {
-  CreateAchievementDTO,
-  CreateEducationDTO,
-  CreateExperienceDTO,
-  CreateTutorProfileDTO,
-  UpdateAchievementDTO,
-  UpdateEducationDTO,
-  UpdateExperienceDTO,
-  UpdateTutorProfileDTO,
-} from './dto';
-import { Role, TutorAchievement, TutorProfile } from '@prisma/client';
+import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO, UpdateTutorProfileDTO } from './dto';
+import { Role, TutorAchievement, TutorAchievementCategory, TutorProfile } from '@prisma/client';
 
 @Injectable()
 export class TutorService {
@@ -25,14 +16,24 @@ export class TutorService {
       where: {
         userId: userId,
       },
-      include: {
-        education: true,
-        experience: true,
-      },
     });
-
     if (!profile) throw new NotFoundException('Profile not found');
-    return profile;
+
+    const achievementsMapping = new Map<keyof typeof TutorAchievementCategory, TutorAchievement[]>();
+    const achievements: TutorAchievement[] = await this.prisma.tutorAchievement.findMany({
+      where: { tutorProfileId: profile.id },
+    });
+    achievements.map((record) => {
+      const currentCategory = record.category;
+      if (currentCategory in achievementsMapping) {
+        achievementsMapping[currentCategory].push(record);
+      } else {
+        achievementsMapping[currentCategory] = [record];
+      }
+    });
+    console.log(achievementsMapping);
+    return { profile, achievements };
+    // return profile;
   }
 
   async createProfile(userId: string, dto: CreateTutorProfileDTO) {
@@ -76,79 +77,79 @@ export class TutorService {
     });
   }
 
-  async createEducation(userId: string, dto: CreateEducationDTO) {
-    const profile = await this.prisma.tutorProfile.findUnique({
-      where: { userId: userId },
-      select: { id: true },
-    });
-    if (!profile) throw new NotFoundException("User's profile not found");
-
-    return this.prisma.tutorEducation.create({
-      data: {
-        tutorProfileId: profile.id,
-        ...dto,
-      },
-    });
-  }
-
-  async updateEducation(userId: string, educationId: string, dto: UpdateEducationDTO) {
-    const profile = await this.prisma.tutorProfile.findUnique({
-      where: { userId: userId },
-      select: { id: true },
-    });
-    if (!profile) throw new NotFoundException("User's profile not found");
-
-    return this.prisma.tutorEducation
-      .update({
-        where: {
-          id: educationId,
-          tutorProfileId: profile.id,
-        },
-        data: {
-          ...dto,
-        },
-      })
-      .catch(() => {
-        throw new BadRequestException('This tutor does not have such a record');
-      });
-  }
-
-  async createExperience(userId: string, dto: CreateExperienceDTO) {
-    const profile = await this.prisma.tutorProfile.findUnique({
-      where: { userId: userId },
-      select: { id: true },
-    });
-    if (!profile) throw new NotFoundException("User's profile not found");
-
-    return this.prisma.tutorExperince.create({
-      data: {
-        tutorProfileId: profile.id,
-        ...dto,
-      },
-    });
-  }
-
-  async updateExperience(userId: string, experienceId: string, dto: UpdateExperienceDTO) {
-    const profile = await this.prisma.tutorProfile.findUnique({
-      where: { userId: userId },
-      select: { id: true },
-    });
-    if (!profile) throw new NotFoundException("User's profile not found");
-
-    return this.prisma.tutorExperince
-      .update({
-        where: {
-          id: experienceId,
-          tutorProfileId: profile.id,
-        },
-        data: {
-          ...dto,
-        },
-      })
-      .catch(() => {
-        throw new BadRequestException('This tutor does not have such a record');
-      });
-  }
+  // async createEducation(userId: string, dto: CreateEducationDTO) {
+  //   const profile = await this.prisma.tutorProfile.findUnique({
+  //     where: { userId: userId },
+  //     select: { id: true },
+  //   });
+  //   if (!profile) throw new NotFoundException("User's profile not found");
+  //
+  //   return this.prisma.tutorEducation.create({
+  //     data: {
+  //       tutorProfileId: profile.id,
+  //       ...dto,
+  //     },
+  //   });
+  // }
+  //
+  // async updateEducation(userId: string, educationId: string, dto: UpdateEducationDTO) {
+  //   const profile = await this.prisma.tutorProfile.findUnique({
+  //     where: { userId: userId },
+  //     select: { id: true },
+  //   });
+  //   if (!profile) throw new NotFoundException("User's profile not found");
+  //
+  //   return this.prisma.tutorEducation
+  //     .update({
+  //       where: {
+  //         id: educationId,
+  //         tutorProfileId: profile.id,
+  //       },
+  //       data: {
+  //         ...dto,
+  //       },
+  //     })
+  //     .catch(() => {
+  //       throw new BadRequestException('This tutor does not have such a record');
+  //     });
+  // }
+  //
+  // async createExperience(userId: string, dto: CreateExperienceDTO) {
+  //   const profile = await this.prisma.tutorProfile.findUnique({
+  //     where: { userId: userId },
+  //     select: { id: true },
+  //   });
+  //   if (!profile) throw new NotFoundException("User's profile not found");
+  //
+  //   return this.prisma.tutorExperince.create({
+  //     data: {
+  //       tutorProfileId: profile.id,
+  //       ...dto,
+  //     },
+  //   });
+  // }
+  //
+  // async updateExperience(userId: string, experienceId: string, dto: UpdateExperienceDTO) {
+  //   const profile = await this.prisma.tutorProfile.findUnique({
+  //     where: { userId: userId },
+  //     select: { id: true },
+  //   });
+  //   if (!profile) throw new NotFoundException("User's profile not found");
+  //
+  //   return this.prisma.tutorExperince
+  //     .update({
+  //       where: {
+  //         id: experienceId,
+  //         tutorProfileId: profile.id,
+  //       },
+  //       data: {
+  //         ...dto,
+  //       },
+  //     })
+  //     .catch(() => {
+  //       throw new BadRequestException('This tutor does not have such a record');
+  //     });
+  // }
 
   async addAchievement(userId: string, dto: CreateAchievementDTO): Promise<TutorAchievement> {
     await this.checkUserProfileRelation(userId);

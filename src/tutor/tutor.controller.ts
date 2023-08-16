@@ -37,7 +37,7 @@ export class TutorController {
   @ApiOkResponse({ type: ProfileResponse })
   @ApiNotFoundResponse({ description: 'User not found' })
   async findOne(@Param('userId', ParseUUIDPipe) userId: string) {
-    const profile = await this.tutorService.findOneProfile(userId);
+    const { profile, achievements } = await this.tutorService.findOneProfile(userId);
     return new ProfileResponse(profile);
   }
 
