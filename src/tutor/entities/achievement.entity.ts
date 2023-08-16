@@ -37,4 +37,6 @@ export class AchievementEntity implements TutorAchievement {
   createdAt: Date;
   @Exclude()
   updatedAt: Date;
+  @Exclude()
+  tutorProfileId: string | null;
 }
