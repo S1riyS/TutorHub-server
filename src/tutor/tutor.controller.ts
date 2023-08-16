@@ -2,6 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -13,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { TutorService } from './tutor.service';
 import {
+  CreateAchievementDTO,
   CreateEducationDTO,
   CreateExperienceDTO,
   CreateTutorProfileDTO,
@@ -20,7 +22,7 @@ import {
   UpdateExperienceDTO,
   UpdateTutorProfileDTO,
 } from './dto';
-import { EducationResponse, ExperienceResponse, ProfileResponse } from './responses';
+import { AchievementResponse, EducationResponse, ExperienceResponse, ProfileResponse } from './responses';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -114,5 +116,38 @@ export class TutorController {
   ) {
     const updatedExperienceRecord = await this.tutorService.updateExperience(userId, experienceId, dto);
     return new ExperienceResponse(updatedExperienceRecord);
+  }
+
+  @Post(':userId/achievements')
+  async addAchievement(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateAchievementDTO) {
+    const achievement = await this.tutorService.addAchievement(userId, dto);
+    return new AchievementResponse(achievement);
+  }
+
+  @Put(':userId/achievements/:achievementId')
+  async updateAchievement(
+    @Param('achievementId', ParseUUIDPipe) achievementId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Body() dto: CreateAchievementDTO,
+  ) {
+    const achievement = await this.tutorService.updateAchievement(userId, achievementId, dto);
+    return new AchievementResponse(achievement);
+  }
+
+  @Delete(':userId/achievements/:achievementId')
+  async deleteAchievement(
+    @Param('achievementId', ParseUUIDPipe) achievementId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ) {
+    return this.tutorService.deleteAchievement(userId, achievementId);
+  }
+
+  @Put(':userId/achievements/:achievementId/confirm')
+  async confirmAchievement(
+    @Param('achievementId', ParseUUIDPipe) achievementId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ) {
+    const achievement = await this.tutorService.confirmAchievement(userId, achievementId);
+    return new AchievementResponse(achievement);
   }
 }
