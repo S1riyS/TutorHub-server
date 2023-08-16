@@ -13,18 +13,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { TutorService } from './tutor.service';
-import {
-  CreateAchievementDTO,
-  CreateEducationDTO,
-  CreateExperienceDTO,
-  CreateTutorProfileDTO,
-  UpdateEducationDTO,
-  UpdateExperienceDTO,
-  UpdateTutorProfileDTO,
-} from './dto';
-import { AchievementResponse, EducationResponse, ExperienceResponse, ProfileResponse } from './responses';
+import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateTutorProfileDTO } from './dto';
+import { AchievementResponse, ProfileResponse } from './responses';
 import {
   ApiBadRequestResponse,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
@@ -70,61 +63,71 @@ export class TutorController {
     return new ProfileResponse(updatedProfile);
   }
 
-  @Post(':userId/education')
-  @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Creates record about education for tutor with given userID' })
-  @ApiCreatedResponse({ type: EducationResponse })
-  @ApiNotFoundResponse({ description: "Tutor's profile not found" })
-  async createEducation(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateEducationDTO) {
-    const educationRecord = await this.tutorService.createEducation(userId, dto);
-    return new EducationResponse(educationRecord);
-  }
-
-  @Put(':userId/education/:educationId')
-  @ApiOperation({ summary: 'Updates record about education for tutor with given userID' })
-  @ApiCreatedResponse({ type: EducationResponse })
-  @ApiBadRequestResponse({ description: 'This tutor does not have such a record' })
-  @ApiNotFoundResponse({ description: "Tutor's profile not found" })
-  async updateEducation(
-    @Param('userId', ParseUUIDPipe) userId: string,
-    @Param('educationId', ParseUUIDPipe) educationId: string,
-    @Body() dto: UpdateEducationDTO,
-  ) {
-    const updatedEducationRecord = await this.tutorService.updateEducation(userId, educationId, dto);
-    return new EducationResponse(updatedEducationRecord);
-  }
-
-  @Post(':userId/experience')
-  @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Creates record about experience for tutor with given userID' })
-  @ApiCreatedResponse({ type: ExperienceResponse })
-  @ApiNotFoundResponse({ description: "Tutor's profile not found" })
-  async createExperience(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateExperienceDTO) {
-    const experienceRecord = await this.tutorService.createExperience(userId, dto);
-    return new ExperienceResponse(experienceRecord);
-  }
-
-  @Put(':userId/experience/:experienceId')
-  @ApiOperation({ summary: 'Updates record about experience for tutor with given userID' })
-  @ApiCreatedResponse({ type: ExperienceResponse })
-  @ApiBadRequestResponse({ description: 'This tutor does not have such a record' })
-  @ApiNotFoundResponse({ description: "Tutor's profile not found" })
-  async updateExperience(
-    @Param('userId', ParseUUIDPipe) userId: string,
-    @Param('experienceId', ParseUUIDPipe) experienceId: string,
-    @Body() dto: UpdateExperienceDTO,
-  ) {
-    const updatedExperienceRecord = await this.tutorService.updateExperience(userId, experienceId, dto);
-    return new ExperienceResponse(updatedExperienceRecord);
-  }
+  // @Post(':userId/education')
+  // @HttpCode(HttpStatus.CREATED)
+  // @ApiOperation({ summary: 'Creates record about education for tutor with given userID' })
+  // @ApiCreatedResponse({ type: EducationResponse })
+  // @ApiNotFoundResponse({ description: "Tutor's profile not found" })
+  // async createEducation(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateEducationDTO) {
+  //   const educationRecord = await this.tutorService.createEducation(userId, dto);
+  //   return new EducationResponse(educationRecord);
+  // }
+  //
+  // @Put(':userId/education/:educationId')
+  // @ApiOperation({ summary: 'Updates record about education for tutor with given userID' })
+  // @ApiCreatedResponse({ type: EducationResponse })
+  // @ApiBadRequestResponse({ description: 'This tutor does not have such a record' })
+  // @ApiNotFoundResponse({ description: "Tutor's profile not found" })
+  // async updateEducation(
+  //   @Param('userId', ParseUUIDPipe) userId: string,
+  //   @Param('educationId', ParseUUIDPipe) educationId: string,
+  //   @Body() dto: UpdateEducationDTO,
+  // ) {
+  //   const updatedEducationRecord = await this.tutorService.updateEducation(userId, educationId, dto);
+  //   return new EducationResponse(updatedEducationRecord);
+  // }
+  //
+  // @Post(':userId/experience')
+  // @HttpCode(HttpStatus.CREATED)
+  // @ApiOperation({ summary: 'Creates record about experience for tutor with given userID' })
+  // @ApiCreatedResponse({ type: ExperienceResponse })
+  // @ApiNotFoundResponse({ description: "Tutor's profile not found" })
+  // async createExperience(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateExperienceDTO) {
+  //   const experienceRecord = await this.tutorService.createExperience(userId, dto);
+  //   return new ExperienceResponse(experienceRecord);
+  // }
+  //
+  // @Put(':userId/experience/:experienceId')
+  // @ApiOperation({ summary: 'Updates record about experience for tutor with given userID' })
+  // @ApiCreatedResponse({ type: ExperienceResponse })
+  // @ApiBadRequestResponse({ description: 'This tutor does not have such a record' })
+  // @ApiNotFoundResponse({ description: "Tutor's profile not found" })
+  // async updateExperience(
+  //   @Param('userId', ParseUUIDPipe) userId: string,
+  //   @Param('experienceId', ParseUUIDPipe) experienceId: string,
+  //   @Body() dto: UpdateExperienceDTO,
+  // ) {
+  //   const updatedExperienceRecord = await this.tutorService.updateExperience(userId, experienceId, dto);
+  //   return new ExperienceResponse(updatedExperienceRecord);
+  // }
 
   @Post(':userId/achievements')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Creates achievement for tutor with given userId' })
+  @ApiCreatedResponse({ type: AchievementResponse })
+  @ApiNotFoundResponse({ description: "Tutor's profile not found" })
   async addAchievement(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateAchievementDTO) {
     const achievement = await this.tutorService.addAchievement(userId, dto);
     return new AchievementResponse(achievement);
   }
 
   @Put(':userId/achievements/:achievementId')
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Updates achievement for tutor with given userId' })
+  @ApiOkResponse({ type: AchievementResponse })
+  @ApiForbiddenResponse({ description: 'Confirmed achievement can not be updated' })
+  @ApiNotFoundResponse({ description: "Tutor's profile not found or This tutor does not have such an achievement" })
   async updateAchievement(
     @Param('achievementId', ParseUUIDPipe) achievementId: string,
     @Param('userId', ParseUUIDPipe) userId: string,
@@ -135,6 +138,9 @@ export class TutorController {
   }
 
   @Delete(':userId/achievements/:achievementId')
+  @ApiOperation({ summary: 'Deletes achievement' })
+  @ApiOkResponse()
+  @ApiNotFoundResponse({ description: "Tutor's profile not found or This tutor does not have such an achievement" })
   async deleteAchievement(
     @Param('achievementId', ParseUUIDPipe) achievementId: string,
     @Param('userId', ParseUUIDPipe) userId: string,
@@ -143,6 +149,9 @@ export class TutorController {
   }
 
   @Put(':userId/achievements/:achievementId/confirm')
+  @ApiOperation({ summary: 'Sets isConfirmed field of achievement to TRUE' })
+  @ApiOkResponse({ type: AchievementResponse })
+  @ApiNotFoundResponse({ description: "Tutor's profile not found or This tutor does not have such an achievement" })
   async confirmAchievement(
     @Param('achievementId', ParseUUIDPipe) achievementId: string,
     @Param('userId', ParseUUIDPipe) userId: string,
