@@ -3,6 +3,7 @@ import { PrismaService } from '@prisma/prisma.service';
 import { User } from '@prisma/client';
 import { genSalt, hash } from 'bcrypt';
 import { CreateUserDTO, UpdateUserDTO } from '@user/dto';
+import { DeleteResponse } from '@user/responses';
 
 @Injectable()
 export class UserService {
@@ -49,7 +50,7 @@ export class UserService {
     return this.prisma.user.findMany();
   }
 
-  async delete(id: string): Promise<{ [id: string]: string }> {
+  async delete(id: string): Promise<DeleteResponse> {
     //   TODO: add check if user tries to delete himself of it is admin
     return this.prisma.user.delete({
       where: {
