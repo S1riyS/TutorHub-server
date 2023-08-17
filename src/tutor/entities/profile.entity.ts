@@ -1,7 +1,6 @@
 import { $Enums, TeachingFormat, TutorProfile } from '@prisma/client';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Exclude, Type } from 'class-transformer';
-import { AchievementResponse } from '../responses';
+import { Exclude } from 'class-transformer';
 import { IsArray, IsDateString, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class ProfileEntity implements TutorProfile {
@@ -28,10 +27,6 @@ export class ProfileEntity implements TutorProfile {
   @IsEnum(TeachingFormat, { each: true })
   @ApiProperty({ example: [$Enums.TeachingFormat.REMOTELY] })
   teachingFormats: $Enums.TeachingFormat[];
-
-  @Type(() => AchievementResponse)
-  @ApiProperty({ type: [AchievementResponse] })
-  achievements: AchievementResponse[];
 
   @Exclude()
   createdAt: Date;
