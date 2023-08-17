@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { TutorService } from './tutor.service';
 import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateTutorProfileDTO } from './dto';
-import { AchievementResponse, BriefTutorProfileResponse, FullTutorProfileResponse } from './responses';
+import { AchievementResponse, FullTutorProfileResponse, TutorProfileResponse } from './responses';
 import {
   ApiBadRequestResponse,
   ApiConsumes,
@@ -44,23 +44,23 @@ export class TutorController {
   @Post(':userId/profile')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Creates profile for tutor with given userID' })
-  @ApiCreatedResponse({ type: BriefTutorProfileResponse })
+  @ApiCreatedResponse({ type: TutorProfileResponse })
   @ApiBadRequestResponse({ description: 'This tutor already has a profile' })
   @ApiForbiddenResponse({ description: 'User is not tutor' })
   @ApiNotFoundResponse({ description: 'User not found' })
   async createProfile(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateTutorProfileDTO) {
     const profile = await this.tutorService.createProfile(userId, dto);
-    return new BriefTutorProfileResponse(profile);
+    return new TutorProfileResponse(profile);
   }
 
   @Put(':userId/profile')
   @ApiOperation({ summary: 'Updates profile of tutor with given userID' })
-  @ApiOkResponse({ type: BriefTutorProfileResponse })
+  @ApiOkResponse({ type: TutorProfileResponse })
   @ApiBadRequestResponse({ description: 'This user does not have a profile' })
   @ApiNotFoundResponse({ description: 'User not found' })
   async updateProfile(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: UpdateTutorProfileDTO) {
     const updatedProfile = await this.tutorService.updateProfile(userId, dto);
-    return new BriefTutorProfileResponse(updatedProfile);
+    return new TutorProfileResponse(updatedProfile);
   }
 
   // @Post(':userId/education')
