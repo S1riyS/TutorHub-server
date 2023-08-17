@@ -1,51 +1,22 @@
-import { $Enums, TutorProfile } from '@prisma/client';
-import { Exclude, Type } from 'class-transformer';
-import { EducationResponse } from './education.response';
-import { ExperienceResponse } from './experience.response';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { AchievementResponse } from './achievement.response';
+import { ProfileEntity } from '../entities';
 
-interface FullTutorProfile extends TutorProfile {
-  education: EducationResponse[];
-  experience: ExperienceResponse[];
+// export class BriefTutorProfileResponse extends OmitType(ProfileEntity, ['achievements'] as const) {
+//   constructor(profile: Partial<ProfileEntity>) {
+//     super();
+//     Object.assign(this, profile);
+//   }
+// }
+
+export class BriefTutorProfileResponse extends ProfileEntity {
+  constructor(profile: Partial<ProfileEntity>) {
+    super();
+    Object.assign(this, profile);
+  }
 }
 
-export class TutorProfileResponse implements FullTutorProfile {
-  @ApiProperty({ example: '72c82fcb-1f44-43cb-af63-a6b8156f36bc' })
-  id: string;
-
-  @ApiPropertyOptional({ example: 'This is going to be REALLY long text...' })
-  bio: string | null;
-
-  @ApiProperty({ example: '2005-07-04T13:00:00.000Z' })
-  birthDate: Date;
-
-  @ApiProperty({ example: 2020 })
-  careerStartYear: number;
-
-  @ApiProperty({ example: [$Enums.TeachingFormat.REMOTELY] })
-  teachingFormats: $Enums.TeachingFormat[];
-
-  @Type(() => AchievementResponse)
-  @ApiProperty({ type: [AchievementResponse] })
-  achievements: AchievementResponse[];
-
-  @Type(() => EducationResponse)
-  @ApiProperty({ type: [EducationResponse] })
-  education: EducationResponse[];
-
-  @Type(() => ExperienceResponse)
-  @ApiProperty({ type: [ExperienceResponse] })
-  experience: ExperienceResponse[];
-
-  @Exclude()
-  createdAt: Date;
-  @Exclude()
-  updatedAt: Date;
-  @Exclude()
-  userId: string;
-
-  constructor(profile: Partial<FullTutorProfile>) {
+export class FullTutorProfileResponse extends ProfileEntity {
+  constructor(profile: Partial<ProfileEntity>) {
+    super();
     Object.assign(this, profile);
   }
 }

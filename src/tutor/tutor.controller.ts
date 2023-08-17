@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { TutorService } from './tutor.service';
 import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateTutorProfileDTO } from './dto';
-import { AchievementResponse, TutorProfileResponse } from './responses';
+import { AchievementResponse, BriefTutorProfileResponse, FullTutorProfileResponse } from './responses';
 import {
   ApiBadRequestResponse,
   ApiConsumes,
@@ -34,33 +34,33 @@ export class TutorController {
 
   @Get(':userId')
   @ApiOperation({ summary: "Retrieves tutor's profile with given userID" })
-  @ApiOkResponse({ type: TutorProfileResponse })
+  @ApiOkResponse({ type: FullTutorProfileResponse })
   @ApiNotFoundResponse({ description: 'User not found' })
   async findOne(@Param('userId', ParseUUIDPipe) userId: string) {
     const profile = await this.tutorService.findOneProfile(userId);
-    return new TutorProfileResponse(profile);
+    return new FullTutorProfileResponse(profile);
   }
 
   @Post(':userId/profile')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Creates profile for tutor with given userID' })
-  @ApiCreatedResponse({ type: TutorProfileResponse })
+  @ApiCreatedResponse({ type: BriefTutorProfileResponse })
   @ApiBadRequestResponse({ description: 'This tutor already has a profile' })
   @ApiForbiddenResponse({ description: 'User is not tutor' })
   @ApiNotFoundResponse({ description: 'User not found' })
   async createProfile(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateTutorProfileDTO) {
     const profile = await this.tutorService.createProfile(userId, dto);
-    return new TutorProfileResponse(profile);
+    return new BriefTutorProfileResponse(profile);
   }
 
   @Put(':userId/profile')
   @ApiOperation({ summary: 'Updates profile of tutor with given userID' })
-  @ApiOkResponse({ type: TutorProfileResponse })
+  @ApiOkResponse({ type: BriefTutorProfileResponse })
   @ApiBadRequestResponse({ description: 'This user does not have a profile' })
   @ApiNotFoundResponse({ description: 'User not found' })
   async updateProfile(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: UpdateTutorProfileDTO) {
     const updatedProfile = await this.tutorService.updateProfile(userId, dto);
-    return new TutorProfileResponse(updatedProfile);
+    return new BriefTutorProfileResponse(updatedProfile);
   }
 
   // @Post(':userId/education')
