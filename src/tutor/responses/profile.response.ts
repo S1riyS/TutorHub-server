@@ -10,7 +10,7 @@ interface FullTutorProfile extends TutorProfile {
   experience: ExperienceResponse[];
 }
 
-export class ProfileResponse implements FullTutorProfile {
+export class TutorProfileResponse implements FullTutorProfile {
   @ApiProperty({ example: '72c82fcb-1f44-43cb-af63-a6b8156f36bc' })
   id: string;
 
@@ -27,7 +27,7 @@ export class ProfileResponse implements FullTutorProfile {
   teachingFormats: $Enums.TeachingFormat[];
 
   @Type(() => AchievementResponse)
-  @ApiProperty()
+  @ApiProperty({ type: [AchievementResponse] })
   achievements: AchievementResponse[];
 
   @Type(() => EducationResponse)
