@@ -2,7 +2,7 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { PrismaService } from '@prisma/prisma.service';
 import { UserService } from '@user/user.service';
 import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO, UpdateTutorProfileDTO } from './dto';
-import { Role, TutorAchievement, TutorAchievementCategory, TutorProfile } from '@prisma/client';
+import { Role, TutorAchievement, TutorProfile } from '@prisma/client';
 
 @Injectable()
 export class TutorService {
@@ -13,27 +13,11 @@ export class TutorService {
 
   async findOneProfile(userId) {
     const profile = await this.prisma.tutorProfile.findUnique({
-      where: {
-        userId: userId,
-      },
+      where: { userId: userId },
+      include: { achievements: true },
     });
     if (!profile) throw new NotFoundException('Profile not found');
-
-    const achievementsMapping = new Map<keyof typeof TutorAchievementCategory, TutorAchievement[]>();
-    const achievements: TutorAchievement[] = await this.prisma.tutorAchievement.findMany({
-      where: { tutorProfileId: profile.id },
-    });
-    achievements.map((record) => {
-      const currentCategory = record.category;
-      if (currentCategory in achievementsMapping) {
-        achievementsMapping[currentCategory].push(record);
-      } else {
-        achievementsMapping[currentCategory] = [record];
-      }
-    });
-    console.log(achievementsMapping);
-    return { profile, achievements };
-    // return profile;
+    return profile;
   }
 
   async createProfile(userId: string, dto: CreateTutorProfileDTO) {

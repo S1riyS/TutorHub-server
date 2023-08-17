@@ -3,6 +3,7 @@ import { Exclude, Type } from 'class-transformer';
 import { EducationResponse } from './education.response';
 import { ExperienceResponse } from './experience.response';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { AchievementResponse } from './achievement.response';
 
 interface FullTutorProfile extends TutorProfile {
   education: EducationResponse[];
@@ -24,6 +25,10 @@ export class ProfileResponse implements FullTutorProfile {
 
   @ApiProperty({ example: [$Enums.TeachingFormat.REMOTELY] })
   teachingFormats: $Enums.TeachingFormat[];
+
+  @Type(() => AchievementResponse)
+  @ApiProperty()
+  achievements: AchievementResponse[];
 
   @Type(() => EducationResponse)
   @ApiProperty({ type: [EducationResponse] })
