@@ -36,8 +36,7 @@ model TutorProfile {
   teachingFormats TeachingFormat[]
   careerStartYear Int
 
-  education  TutorEducation[]
-  experience TutorExperince[]
+  achievements TutorAchievement[]
 
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique @map("user_id")
@@ -45,30 +44,21 @@ model TutorProfile {
   @@map("tutor_profiles")
 }
 
-model TutorEducation {
-  id                         String  @id @default(uuid())
-  educationalInstitutionName String  @map("educational_institution_name")
-  description                String
-  graduationYear             Int     @map("graduation_year")
-  isConfirmed                Boolean @default(false) @map("is_confirmed")
+model TutorAchievement {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  TutorProfile   TutorProfile? @relation(fields: [tutorProfileId], references: [id])
-  tutorProfileId String?       @map("tutor_profile_id")
+  data          String
+  startYear     Int                      @map("start_year")
+  endYear       Int?                     @map("end_year")
+  category      TutorAchievementCategory
+  attachmentUrl String?                  @map("attachment_url")
 
-  @@map("tutor_education")
-}
-
-model TutorExperince {
-  id          String  @id @default(uuid())
-  jobName     String
-  startYear   Int
-  endYear     Int?
   isConfirmed Boolean @default(false) @map("is_confirmed")
 
   TutorProfile   TutorProfile? @relation(fields: [tutorProfileId], references: [id])
   tutorProfileId String?       @map("tutor_profile_id")
-
-  @@map("tutor_experience")
 }
 
 model StudentProfile {
@@ -88,6 +78,12 @@ enum TeachingFormat {
   REMOTELY
   AT_HOME
   GOES_TO_STUDENT
+}
+
+enum TutorAchievementCategory {
+  EDUCATION
+  EXPERIENCE
+  OTHER
 }
 
 enum Role {

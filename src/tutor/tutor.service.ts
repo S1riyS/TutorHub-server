@@ -1,15 +1,8 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
 import { UserService } from '@user/user.service';
-import {
-  CreateEducationDTO,
-  CreateExperienceDTO,
-  CreateTutorProfileDTO,
-  UpdateEducationDTO,
-  UpdateExperienceDTO,
-  UpdateTutorProfileDTO,
-} from './dto';
-import { Role } from '@prisma/client';
+import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO, UpdateTutorProfileDTO } from './dto';
+import { Role, TutorAchievement, TutorProfile } from '@prisma/client';
 
 @Injectable()
 export class TutorService {
@@ -20,15 +13,9 @@ export class TutorService {
 
   async findOneProfile(userId) {
     const profile = await this.prisma.tutorProfile.findUnique({
-      where: {
-        userId: userId,
-      },
-      include: {
-        education: true,
-        experience: true,
-      },
+      where: { userId: userId },
+      include: { achievements: true },
     });
-
     if (!profile) throw new NotFoundException('Profile not found');
     return profile;
   }
@@ -74,77 +61,61 @@ export class TutorService {
     });
   }
 
-  async createEducation(userId: string, dto: CreateEducationDTO) {
-    const profile = await this.prisma.tutorProfile.findUnique({
-      where: { userId: userId },
+  async addAchievement(userId: string, dto: CreateAchievementDTO): Promise<TutorAchievement> {
+    await this.checkUserProfileRelation(userId);
+
+    return this.prisma.tutorAchievement.create({
+      data: { ...dto },
+    });
+  }
+
+  async updateAchievement(userId: string, achievementId: string, dto: UpdateAchievementDTO): Promise<TutorAchievement> {
+    const profile = await this.checkUserProfileRelation(userId);
+    const achievement = await this.checkProfileAchievementRelation(profile.id, achievementId);
+    if (achievement.isConfirmed) throw new ForbiddenException('Confirmed achievement can not be updated');
+
+    return this.prisma.tutorAchievement.update({
+      where: { id: achievementId },
+      data: { ...dto },
+    });
+  }
+
+  async deleteAchievement(userId: string, achievementId: string) {
+    const profile = await this.checkUserProfileRelation(userId);
+    await this.checkProfileAchievementRelation(profile.id, achievementId);
+
+    return this.prisma.tutorAchievement.delete({
+      where: { id: achievementId },
       select: { id: true },
     });
-    if (!profile) throw new NotFoundException("User's profile not found");
+  }
 
-    return this.prisma.tutorEducation.create({
-      data: {
-        tutorProfileId: profile.id,
-        ...dto,
+  async confirmAchievement(userId: string, achievementId: string): Promise<TutorAchievement> {
+    const profile = await this.checkUserProfileRelation(userId);
+    await this.checkProfileAchievementRelation(profile.id, achievementId);
+
+    return this.prisma.tutorAchievement.update({
+      where: { id: achievementId },
+      data: { isConfirmed: true },
+    });
+  }
+
+  private async checkUserProfileRelation(userId: string): Promise<TutorProfile> {
+    const profile = await this.prisma.tutorProfile.findUnique({
+      where: { userId: userId },
+    });
+    if (!profile) throw new NotFoundException("Tutor's profile not found");
+    return profile;
+  }
+
+  private async checkProfileAchievementRelation(profileId: string, achievementId: string): Promise<TutorAchievement> {
+    const achievement = await this.prisma.tutorAchievement.findUnique({
+      where: {
+        id: achievementId,
+        tutorProfileId: profileId,
       },
     });
-  }
-
-  async updateEducation(userId: string, educationId: string, dto: UpdateEducationDTO) {
-    const profile = await this.prisma.tutorProfile.findUnique({
-      where: { userId: userId },
-      select: { id: true },
-    });
-    if (!profile) throw new NotFoundException("User's profile not found");
-
-    return this.prisma.tutorEducation
-      .update({
-        where: {
-          id: educationId,
-          tutorProfileId: profile.id,
-        },
-        data: {
-          ...dto,
-        },
-      })
-      .catch(() => {
-        throw new BadRequestException('This tutor does not have such a record');
-      });
-  }
-
-  async createExperience(userId: string, dto: CreateExperienceDTO) {
-    const profile = await this.prisma.tutorProfile.findUnique({
-      where: { userId: userId },
-      select: { id: true },
-    });
-    if (!profile) throw new NotFoundException("User's profile not found");
-
-    return this.prisma.tutorExperince.create({
-      data: {
-        tutorProfileId: profile.id,
-        ...dto,
-      },
-    });
-  }
-
-  async updateExperience(userId: string, experienceId: string, dto: UpdateExperienceDTO) {
-    const profile = await this.prisma.tutorProfile.findUnique({
-      where: { userId: userId },
-      select: { id: true },
-    });
-    if (!profile) throw new NotFoundException("User's profile not found");
-
-    return this.prisma.tutorExperince
-      .update({
-        where: {
-          id: experienceId,
-          tutorProfileId: profile.id,
-        },
-        data: {
-          ...dto,
-        },
-      })
-      .catch(() => {
-        throw new BadRequestException('This tutor does not have such a record');
-      });
+    if (!achievement) throw new NotFoundException('This tutor does not have such an achievement');
+    return achievement;
   }
 }
