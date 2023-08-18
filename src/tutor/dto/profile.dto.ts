@@ -1,28 +1,11 @@
-import { IsArray, IsDateString, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { $Enums, TeachingFormat } from '@prisma/client';
-import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+import { PartialType, PickType } from '@nestjs/swagger';
+import { TutorProfileEntity } from '../entities';
 
-export class CreateTutorProfileDTO {
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  @ApiPropertyOptional({ example: 'This is going to be REALLY long text...' })
-  bio?: string;
-
-  @IsNotEmpty()
-  @IsDateString()
-  @ApiProperty({ example: '2005-07-04T13:00:00.000Z' })
-  birthDate: Date;
-
-  @IsArray()
-  @IsEnum(TeachingFormat, { each: true })
-  @ApiProperty({ example: [$Enums.TeachingFormat.REMOTELY] })
-  teachingFormats: TeachingFormat[];
-
-  @IsNotEmpty()
-  @IsInt()
-  @ApiProperty({ example: 2020 })
-  careerStartYear: number;
-}
+export class CreateTutorProfileDTO extends PickType(TutorProfileEntity, [
+  'bio',
+  'birthDate',
+  'careerStartYear',
+  'teachingFormats',
+] as const) {}
 
 export class UpdateTutorProfileDTO extends PartialType(CreateTutorProfileDTO) {}
