@@ -3,7 +3,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { IsArray, IsDateString, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class ProfileEntity implements TutorProfile {
+export class TutorProfileEntity implements TutorProfile {
   @ApiProperty({ example: '72c82fcb-1f44-43cb-af63-a6b8156f36bc' })
   id: string;
 
