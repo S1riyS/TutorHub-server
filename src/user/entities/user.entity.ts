@@ -1,7 +1,7 @@
 import { $Enums, User } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, MinLength } from 'class-validator';
 
 export class UserEntity implements User {
   @ApiProperty({ example: '220e47eb-0198-48b2-a401-1b5c1b34fe7b' })
@@ -14,6 +14,7 @@ export class UserEntity implements User {
 
   @IsNotEmpty()
   @IsString()
+  @MinLength(6)
   @Exclude()
   password: string;
 
