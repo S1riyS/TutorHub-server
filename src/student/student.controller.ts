@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { CreateStudentProfileDTO, UpdateStudentProfileDTO } from './dto';
-import { ProfileResponse } from './responses';
+import { StudentProfileResponse } from './responses';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -32,17 +32,17 @@ export class StudentController {
 
   @Get(':userId/profile')
   @ApiOperation({ summary: "Retrieves student's profile with given userID" })
-  @ApiOkResponse({ type: ProfileResponse })
+  @ApiOkResponse({ type: StudentProfileResponse })
   @ApiNotFoundResponse({ description: 'Profile not found' })
   async findOne(@Param('userId', ParseUUIDPipe) userId: string) {
     const profile = await this.studentService.findOneProfile(userId);
-    return new ProfileResponse(profile);
+    return new StudentProfileResponse(profile);
   }
 
   @Post(':userId/profile')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Creates profile for student with given userID' })
-  @ApiCreatedResponse({ type: ProfileResponse })
+  @ApiCreatedResponse({ type: StudentProfileResponse })
   @ApiBadRequestResponse({ description: 'This student already has a profile' })
   @ApiForbiddenResponse({ description: 'User is not student' })
   @ApiNotFoundResponse({ description: 'User not found' })
@@ -51,12 +51,12 @@ export class StudentController {
     @Body() createStudentDto: CreateStudentProfileDTO,
   ) {
     const profile = await this.studentService.createProfile(userId, createStudentDto);
-    return new ProfileResponse(profile);
+    return new StudentProfileResponse(profile);
   }
 
   @Put(':userId/profile')
   @ApiOperation({ summary: 'Updates profile of student with given userID' })
-  @ApiOkResponse({ type: ProfileResponse })
+  @ApiOkResponse({ type: StudentProfileResponse })
   @ApiBadRequestResponse({ description: 'This user does not have a profile' })
   @ApiNotFoundResponse({ description: 'User not found' })
   async updateProfile(
@@ -64,6 +64,6 @@ export class StudentController {
     @Body() updateStudentDto: UpdateStudentProfileDTO,
   ) {
     const profile = await this.studentService.updateProfile(userId, updateStudentDto);
-    return new ProfileResponse(profile);
+    return new StudentProfileResponse(profile);
   }
 }
