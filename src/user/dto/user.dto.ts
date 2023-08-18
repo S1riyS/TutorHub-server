@@ -1,7 +1,15 @@
-import { OmitType, PartialType } from '@nestjs/swagger';
+import { OmitType, PartialType, PickType } from '@nestjs/swagger';
 import { UserEntity } from '@user/entities';
 
-export class CreateUserDTO extends OmitType(UserEntity, ['id'] as const) {}
+export class CreateUserDTO extends PickType(UserEntity, [
+  'email',
+  'password',
+  'firstName',
+  'lastName',
+  'middleName',
+  'imageLink',
+  'phoneNumber',
+  'role',
+] as const) {}
 
-// In UpdateUserDTO fields 'email', 'password', 'role' are omitted, others are optional
 export class UpdateUserDTO extends PartialType(OmitType(CreateUserDTO, ['email', 'password', 'role'] as const)) {}
