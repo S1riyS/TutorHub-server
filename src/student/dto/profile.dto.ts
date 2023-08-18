@@ -1,11 +1,6 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { PartialType, PickType } from '@nestjs/swagger';
+import { StudentProfileEntity } from '../entities';
 
-export class CreateStudentProfileDTO {
-  @IsNotEmpty()
-  @IsNumber()
-  @ApiProperty({ example: 10 })
-  grade: number;
-}
+export class CreateStudentProfileDTO extends PickType(StudentProfileEntity, ['grade'] as const) {}
 
 export class UpdateStudentProfileDTO extends PartialType(CreateStudentProfileDTO) {}
