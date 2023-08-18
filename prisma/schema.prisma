@@ -18,12 +18,23 @@ model User {
   phoneNumber String  @unique @map("phone_number")
   imageLink   String? @map("image_link")
 
-  role Role
+  role   Role
+  tokens Token[]
 
   tutorProfile   TutorProfile?
   studentProfile StudentProfile?
 
   @@map("users")
+}
+
+model Token {
+  value String   @unique
+  exp   DateTime
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+
+  @@map("tokens")
 }
 
 model TutorProfile {
