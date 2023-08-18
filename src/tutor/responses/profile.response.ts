@@ -1,10 +1,10 @@
-import { ProfileEntity } from '../entities';
+import { TutorProfileEntity } from '../entities';
 import { AchievementResponse } from './achievement.response';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class TutorProfileResponse extends ProfileEntity {
-  constructor(profile: Partial<ProfileEntity>) {
+export class TutorProfileResponse extends TutorProfileEntity {
+  constructor(profile: Partial<TutorProfileEntity>) {
     super();
     Object.assign(this, profile);
   }
