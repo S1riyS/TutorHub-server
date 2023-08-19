@@ -6,7 +6,14 @@ import { Tokens } from './interfaces';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Cookie, Public, UserAgent } from '@common/decorators';
-import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiCookieAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { UserResponse } from '@user/responses';
 import { TokensResponse } from './responses';
 import { REFRESH_TOKEN_COOKIE_NAME } from '@common/constants';
@@ -42,6 +49,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Generates new pair of tokens (access and refresh)' })
   @ApiOkResponse({ type: TokensResponse })
   @ApiUnauthorizedResponse({ description: 'Something wrong with token' })
+  @ApiCookieAuth()
   async refreshTokens(
     @Cookie(REFRESH_TOKEN_COOKIE_NAME) refreshToken: string,
     @Res() response: Response,
