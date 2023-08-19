@@ -14,6 +14,7 @@ import { UpdateUserDTO } from '@user/dto';
 import { DeleteResponse, UserResponse } from '@user/responses';
 import { User } from '@prisma/client';
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Public } from '@common/decorators';
 
 @Controller('users')
 @ApiTags('Users')
@@ -22,6 +23,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @Public()
   @ApiOperation({ summary: 'Retrieves all users' })
   @ApiOkResponse({ type: [UserResponse] })
   async findAll() {
@@ -30,6 +32,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @Public()
   @ApiOperation({ summary: 'Retrieves user with given ID' })
   @ApiOkResponse({ type: UserResponse })
   @ApiNotFoundResponse({ description: 'User not found' })

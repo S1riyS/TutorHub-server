@@ -23,6 +23,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { Public } from '@common/decorators';
 
 @Controller('students')
 @ApiTags('Students')
@@ -31,6 +32,7 @@ export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
   @Get(':userId/profile')
+  @Public()
   @ApiOperation({ summary: "Retrieves student's profile with given userID" })
   @ApiOkResponse({ type: StudentProfileResponse })
   @ApiNotFoundResponse({ description: 'Profile not found' })

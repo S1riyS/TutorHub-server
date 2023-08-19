@@ -25,6 +25,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { Public } from '@common/decorators';
 
 @Controller('tutors')
 @ApiTags('Tutors')
@@ -33,6 +34,7 @@ export class TutorController {
   constructor(private readonly tutorService: TutorService) {}
 
   @Get(':userId')
+  @Public()
   @ApiOperation({ summary: "Retrieves tutor's profile with given userID" })
   @ApiOkResponse({ type: FullTutorProfileResponse })
   @ApiNotFoundResponse({ description: 'User not found' })
