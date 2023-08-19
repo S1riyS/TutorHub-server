@@ -29,6 +29,12 @@
       ],
       "@user/*": [
         "src/user/*"
+      ],
+      "@common": [
+        "libs/common/src"
+      ],
+      "@common/*": [
+        "libs/common/src/*"
       ]
     }
   }
