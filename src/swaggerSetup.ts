@@ -5,7 +5,7 @@ import { INestApplication } from '@nestjs/common';
 import { SecuritySchemeObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 import { REFRESH_TOKEN_COOKIE_NAME } from '@common/constants';
 
-const styles = fs.readFileSync(path.join(__dirname, '../src/swaggerDark.css'), 'utf8');
+const styles = fs.readFileSync(path.join(__dirname, '../src/swaggerDark.min.css'), 'utf8');
 
 async function swaggerSetup(app: INestApplication) {
   const JWTOptions: SecuritySchemeObject = {
