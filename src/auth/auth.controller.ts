@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 import { Tokens } from './interfaces';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { Cookie } from '@common/decorators';
+import { Cookie, UserAgent } from '@common/decorators';
 
 const REFRESH_TOKEN_COOKIE_NAME = 'REFRESH_TOKEN';
 
@@ -23,15 +23,19 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() dto: LoginDTO, @Res() response: Response) {
-    const tokens = await this.authService.login(dto);
+  async login(@Body() dto: LoginDTO, @Res() response: Response, @UserAgent() userAgent: string) {
+    const tokens = await this.authService.login(dto, userAgent);
     this.setRefreshTokenToCookies(tokens, response);
   }
 
   @Get('refresh-tokens')
-  async refreshTokens(@Cookie(REFRESH_TOKEN_COOKIE_NAME) refreshToken: string, @Res() response: Response) {
+  async refreshTokens(
+    @Cookie(REFRESH_TOKEN_COOKIE_NAME) refreshToken: string,
+    @Res() response: Response,
+    @UserAgent() userAgent: string,
+  ) {
     if (!refreshToken) throw new UnauthorizedException();
-    const tokens = await this.authService.refreshTokens(refreshToken);
+    const tokens = await this.authService.refreshTokens(refreshToken, userAgent);
     this.setRefreshTokenToCookies(tokens, response);
   }
 

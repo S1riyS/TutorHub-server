@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { add } from 'date-fns';
+import { v4 as uuid } from 'uuid';
 import { CreateUserDTO as RegisterDTO } from '@user/dto';
 import { UserService } from '@user/user.service';
 import { LoginDTO } from './dto';
@@ -23,7 +24,7 @@ export class AuthService {
     return this.userService.create(dto);
   }
 
-  async login(dto: LoginDTO): Promise<Tokens> {
+  async login(dto: LoginDTO, userAgent: string): Promise<Tokens> {
     const user = await this.userService.findOne(dto.email);
     let passwordMatches: boolean;
 
@@ -35,10 +36,10 @@ export class AuthService {
 
     if (!user || !passwordMatches) throw new UnauthorizedException('Incorrect email or password');
 
-    return this.generateTokens(user);
+    return this.generateTokens(user, userAgent);
   }
 
-  async refreshTokens(refreshToken: string): Promise<Tokens> {
+  async refreshTokens(refreshToken: string, userAgent: string): Promise<Tokens> {
     const token = await this.prisma.token.findUnique({
       where: { value: refreshToken },
       include: { user: true },
@@ -54,16 +55,16 @@ export class AuthService {
 
     // If user has token, and it is alive, generating a new pair of tokens
     const tokenOwner: User = token.user;
-    return this.generateTokens(tokenOwner);
+    return this.generateTokens(tokenOwner, userAgent);
   }
 
-  private async generateTokens(user: User): Promise<Tokens> {
+  private async generateTokens(user: User, userAgent: string): Promise<Tokens> {
     const accessToken = this.jwtService.sign({
       id: user.id,
       email: user.email,
       role: user.role,
     });
-    const refreshToken = await this.generateRefreshToken(user.id);
+    const refreshToken = await this.generateRefreshToken(user.id, userAgent);
 
     return {
       accessToken: `Bearer ${accessToken}`,
@@ -71,12 +72,34 @@ export class AuthService {
     };
   }
 
-  private async generateRefreshToken(userId: string): Promise<Token> {
-    const refreshTokenLifeMonths = this.config.get<number>('JWT_REFRESH_EXP_MONTHS');
-    return this.prisma.token.create({
-      data: {
+  private async generateRefreshToken(userId: string, userAgent: string): Promise<Token> {
+    // Retrieving token
+    const token = await this.prisma.token.findFirst({
+      where: {
         userId: userId,
-        exp: add(new Date(), { months: refreshTokenLifeMonths }),
+        userAgent: userAgent,
+      },
+    });
+
+    // If token exists, getting its value, otherwise - empty string
+    const tokenValue = token?.value ?? '';
+
+    // Calculating expiration date
+    const refreshTokenLifeMonths = this.config.get<number>('JWT_REFRESH_EXP_MONTHS');
+    const expirationDate = add(new Date(), { months: refreshTokenLifeMonths });
+
+    // Creating new token or updating already existing
+    return this.prisma.token.upsert({
+      where: { value: tokenValue },
+      create: {
+        value: uuid(),
+        exp: expirationDate,
+        userId: userId,
+        userAgent: userAgent,
+      },
+      update: {
+        value: uuid(),
+        exp: expirationDate,
       },
     });
   }
