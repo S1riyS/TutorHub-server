@@ -43,7 +43,7 @@ export class AuthService {
     const refreshToken = await this.generateRefreshToken(user.id);
 
     return {
-      accessToken: accessToken,
+      accessToken: `Bearer ${accessToken}`,
       refreshToken: refreshToken,
     };
   }
