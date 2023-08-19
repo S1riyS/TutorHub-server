@@ -32,8 +32,9 @@ export class UserController {
   @Get(':id')
   @ApiOperation({ summary: 'Retrieves user with given ID' })
   @ApiOkResponse({ type: UserResponse })
+  @ApiNotFoundResponse({ description: 'User not found' })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    const user = await this.userService.findOne(id);
+    const user = await this.userService.findOne(id, true);
     return new UserResponse(user);
   }
 

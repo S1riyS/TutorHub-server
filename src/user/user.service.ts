@@ -23,8 +23,7 @@ export class UserService {
   }
 
   async update(id: string, user: UpdateUserDTO): Promise<User> {
-    const candidate = await this.findOne(id);
-    if (!candidate) throw new NotFoundException('User not found');
+    await this.findOne(id, true); // Trying to find a user to update
 
     return this.prisma.user.update({
       where: {
@@ -36,13 +35,17 @@ export class UserService {
     });
   }
 
-  async findOne(idOrEmail: string): Promise<User | null> {
-    const user = this.prisma.user.findFirst({
+  async findOne(idOrEmail: string, throwWhenNotFound: boolean = false): Promise<User | null> {
+    const user = await this.prisma.user.findFirst({
       where: {
         OR: [{ id: idOrEmail }, { email: idOrEmail }],
       },
     });
-    if (!user) return null;
+
+    if (!user) {
+      if (throwWhenNotFound) throw new NotFoundException('User not found');
+      return null;
+    }
     return user;
   }
 
