@@ -5,11 +5,12 @@ import { AuthService } from './auth.service';
 import { Tokens } from './interfaces';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { Cookie } from '@common/decorators';
+
+const REFRESH_TOKEN_COOKIE_NAME = 'REFRESH_TOKEN';
 
 @Controller('auth')
 export class AuthController {
-  private readonly REFRESH_TOKEN_COOKIE_NAME = 'REFRESH_TOKEN';
-
   constructor(
     private readonly config: ConfigService,
     private readonly authService: AuthService,
@@ -27,13 +28,17 @@ export class AuthController {
     this.setRefreshTokenToCookies(tokens, response);
   }
 
-  @Get('refresh')
-  refreshTokens() {}
+  @Get('refresh-tokens')
+  async refreshTokens(@Cookie(REFRESH_TOKEN_COOKIE_NAME) refreshToken: string, @Res() response: Response) {
+    if (!refreshToken) throw new UnauthorizedException();
+    const tokens = await this.authService.refreshTokens(refreshToken);
+    this.setRefreshTokenToCookies(tokens, response);
+  }
 
   private setRefreshTokenToCookies(tokens: Tokens, response: Response) {
-    if (!tokens) throw new UnauthorizedException('');
+    if (!tokens) throw new UnauthorizedException();
 
-    response.cookie(this.REFRESH_TOKEN_COOKIE_NAME, tokens.refreshToken.value, {
+    response.cookie(REFRESH_TOKEN_COOKIE_NAME, tokens.refreshToken.value, {
       httpOnly: true,
       sameSite: 'lax',
       expires: new Date(tokens.refreshToken.exp),

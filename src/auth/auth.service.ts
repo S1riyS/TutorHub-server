@@ -6,7 +6,7 @@ import { LoginDTO } from './dto';
 import { Tokens } from './interfaces';
 import { compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { Token } from '@prisma/client';
+import { Token, User } from '@prisma/client';
 import { PrismaService } from '@prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 
@@ -35,6 +35,26 @@ export class AuthService {
 
     if (!user || !passwordMatches) throw new UnauthorizedException('Incorrect email or password');
 
+    return this.generateTokens(user);
+  }
+
+  async refreshTokens(refreshToken: string): Promise<Tokens> {
+    const token = await this.prisma.token
+      .delete({
+        where: { value: refreshToken },
+        select: { user: true },
+      })
+      .catch(() => {
+        throw new UnauthorizedException();
+      });
+
+    if (!token) throw new UnauthorizedException();
+
+    const tokenOwner: User = token.user;
+    return this.generateTokens(tokenOwner);
+  }
+
+  private async generateTokens(user: User): Promise<Tokens> {
     const accessToken = this.jwtService.sign({
       id: user.id,
       email: user.email,
