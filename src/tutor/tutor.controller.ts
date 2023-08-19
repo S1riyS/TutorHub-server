@@ -13,7 +13,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { TutorService } from './tutor.service';
-import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateTutorProfileDTO } from './dto';
+import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO, UpdateTutorProfileDTO } from './dto';
 import { AchievementResponse, FullTutorProfileResponse, TutorProfileResponse } from './responses';
 import {
   ApiBadRequestResponse,
@@ -90,7 +90,7 @@ export class TutorController {
   async updateAchievement(
     @Param('achievementId', ParseUUIDPipe) achievementId: string,
     @Param('userId', ParseUUIDPipe) userId: string,
-    @Body() dto: CreateAchievementDTO,
+    @Body() dto: UpdateAchievementDTO,
   ) {
     const achievement = await this.tutorService.updateAchievement(userId, achievementId, dto);
     return new AchievementResponse(achievement);
