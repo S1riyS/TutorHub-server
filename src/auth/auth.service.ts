@@ -44,7 +44,7 @@ export class AuthService {
       where: { value: refreshToken },
       include: { user: true },
     });
-    // Checking if user has refresh token
+    // Checking if user doesn't have refresh token
     if (!token) throw new UnauthorizedException();
 
     // If he has, deleting it
