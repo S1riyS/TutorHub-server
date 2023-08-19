@@ -13,7 +13,8 @@ import { UserService } from '@user/user.service';
 import { UpdateUserDTO } from '@user/dto';
 import { DeleteResponse, UserResponse } from '@user/responses';
 import { User } from '@prisma/client';
-import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Public } from '@common/decorators';
 
 @Controller('users')
 @ApiTags('Users')
@@ -22,6 +23,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @Public()
   @ApiOperation({ summary: 'Retrieves all users' })
   @ApiOkResponse({ type: [UserResponse] })
   async findAll() {
@@ -30,10 +32,12 @@ export class UserController {
   }
 
   @Get(':id')
+  @Public()
   @ApiOperation({ summary: 'Retrieves user with given ID' })
   @ApiOkResponse({ type: UserResponse })
+  @ApiNotFoundResponse({ description: 'User not found' })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    const user = await this.userService.findOne(id);
+    const user = await this.userService.findOne(id, true);
     return new UserResponse(user);
   }
 
@@ -41,6 +45,7 @@ export class UserController {
   @ApiOperation({ summary: 'Updates user with given ID' })
   @ApiOkResponse({ type: UserResponse })
   @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiBearerAuth('JWT-auth')
   async update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateUserDTO) {
     const user = await this.userService.update(id, dto);
     return new UserResponse(user);
@@ -49,6 +54,7 @@ export class UserController {
   @Delete(':id')
   @ApiOperation({ summary: 'Deletes user with given ID' })
   @ApiOkResponse({ type: DeleteResponse })
+  @ApiBearerAuth('JWT-auth')
   async delete(@Param('id', ParseUUIDPipe) id: string) {
     return this.userService.delete(id);
   }

@@ -16,6 +16,7 @@ import { CreateStudentProfileDTO, UpdateStudentProfileDTO } from './dto';
 import { StudentProfileResponse } from './responses';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
@@ -23,6 +24,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { Public } from '@common/decorators';
 
 @Controller('students')
 @ApiTags('Students')
@@ -31,6 +33,7 @@ export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
   @Get(':userId/profile')
+  @Public()
   @ApiOperation({ summary: "Retrieves student's profile with given userID" })
   @ApiOkResponse({ type: StudentProfileResponse })
   @ApiNotFoundResponse({ description: 'Profile not found' })
@@ -46,6 +49,7 @@ export class StudentController {
   @ApiBadRequestResponse({ description: 'This student already has a profile' })
   @ApiForbiddenResponse({ description: 'User is not student' })
   @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiBearerAuth('JWT-auth')
   async createProfile(
     @Param('userId', ParseUUIDPipe) userId: string,
     @Body() createStudentDto: CreateStudentProfileDTO,
@@ -59,6 +63,7 @@ export class StudentController {
   @ApiOkResponse({ type: StudentProfileResponse })
   @ApiBadRequestResponse({ description: 'This user does not have a profile' })
   @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiBearerAuth('JWT-auth')
   async updateProfile(
     @Param('userId', ParseUUIDPipe) userId: string,
     @Body() updateStudentDto: UpdateStudentProfileDTO,
