@@ -8,9 +8,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { UserResponse } from '@user/responses';
-import { TokensResponse } from '../../../../../src/auth/responses';
+import { TokensResponse } from '@auth/responses';
 import { CreateUserDTO as RegisterDTO } from '@user/dto';
-import { LoginDTO } from '../../../../../src/auth/dto';
+import { LoginDTO } from '@auth/dto';
 
 export function AuthRegistrationSwaggerDecorator() {
   return applyDecorators(
