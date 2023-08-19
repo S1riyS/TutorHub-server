@@ -39,17 +39,20 @@ export class AuthService {
   }
 
   async refreshTokens(refreshToken: string): Promise<Tokens> {
-    const token = await this.prisma.token
-      .delete({
-        where: { value: refreshToken },
-        select: { user: true },
-      })
-      .catch(() => {
-        throw new UnauthorizedException();
-      });
-
+    const token = await this.prisma.token.findUnique({
+      where: { value: refreshToken },
+      include: { user: true },
+    });
+    // Checking if user has refresh token
     if (!token) throw new UnauthorizedException();
 
+    // If he has, deleting it
+    await this.prisma.token.delete({ where: { value: refreshToken } });
+
+    // Checking if token is expired. If so, throwing exception
+    if (new Date(token.exp) < new Date()) throw new UnauthorizedException();
+
+    // If user has token, and it is alive, generating a new pair of tokens
     const tokenOwner: User = token.user;
     return this.generateTokens(tokenOwner);
   }
