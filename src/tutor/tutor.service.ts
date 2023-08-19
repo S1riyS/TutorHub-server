@@ -62,10 +62,13 @@ export class TutorService {
   }
 
   async addAchievement(userId: string, dto: CreateAchievementDTO): Promise<TutorAchievement> {
-    await this.checkUserProfileRelation(userId);
+    const profile = await this.checkUserProfileRelation(userId);
 
     return this.prisma.tutorAchievement.create({
-      data: { ...dto },
+      data: {
+        tutorProfileId: profile.id,
+        ...dto,
+      },
     });
   }
 
