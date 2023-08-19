@@ -9,8 +9,7 @@ import { Cookie, Public, UserAgent } from '@common/decorators';
 import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { UserResponse } from '@user/responses';
 import { TokensResponse } from './responses';
-
-const REFRESH_TOKEN_COOKIE_NAME = 'REFRESH_TOKEN';
+import { REFRESH_TOKEN_COOKIE_NAME } from '@common/constants';
 
 @Public()
 @Controller('auth')
