@@ -25,7 +25,14 @@ export class AuthService {
 
   async login(dto: LoginDTO): Promise<Tokens> {
     const user = await this.userService.findOne(dto.email);
-    const passwordMatches = await compare(dto.password, user.password);
+    let passwordMatches: boolean;
+
+    if (user) {
+      passwordMatches = await compare(dto.password, user.password);
+    } else {
+      passwordMatches = false;
+    }
+
     if (!user || !passwordMatches) throw new UnauthorizedException('Incorrect email or password');
 
     const accessToken = this.jwtService.sign({
