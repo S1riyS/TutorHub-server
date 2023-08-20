@@ -45,6 +45,6 @@ export class UserEntity implements User {
 
   @IsNotEmpty()
   @IsEnum($Enums.Role)
-  @ApiProperty({ example: $Enums.Role.TUTOR })
+  @ApiProperty({ example: $Enums.Role.TUTOR, enum: $Enums.Role })
   role: $Enums.Role;
 }

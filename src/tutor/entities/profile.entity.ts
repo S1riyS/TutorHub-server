@@ -25,7 +25,7 @@ export class TutorProfileEntity implements TutorProfile {
 
   @IsArray()
   @IsEnum(TeachingFormat, { each: true })
-  @ApiProperty({ example: [$Enums.TeachingFormat.REMOTELY] })
+  @ApiProperty({ example: [$Enums.TeachingFormat.REMOTELY], enum: $Enums.TeachingFormat })
   teachingFormats: $Enums.TeachingFormat[];
 
   @Exclude()

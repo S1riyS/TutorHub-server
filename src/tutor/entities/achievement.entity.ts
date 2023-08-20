@@ -22,7 +22,7 @@ export class AchievementEntity implements TutorAchievement {
   @IsNumber()
   endYear: number | null;
 
-  @ApiProperty({ example: $Enums.TutorAchievementCategory.EDUCATION })
+  @ApiProperty({ example: $Enums.TutorAchievementCategory.EDUCATION, enum: $Enums.TutorAchievementCategory })
   @IsNotEmpty()
   @IsEnum($Enums.TutorAchievementCategory)
   category: $Enums.TutorAchievementCategory;
