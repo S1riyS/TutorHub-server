@@ -21,12 +21,16 @@ async function swaggerSetup(app: INestApplication) {
     .setTitle('TutorHub REST API')
     .setDescription('Documentation for TutorHub REST API')
     .setVersion('1.0')
+    .addTag('Users', 'Methods for interaction with User entities')
+    .addTag('Tutors', 'Methods for interaction with tutor profiles')
+    .addTag('Students', 'Methods for interaction with student profiles')
+    .addTag('Auth', 'Methods for authorization')
     .addBearerAuth(JWTOptions, 'JWT-auth')
     .addCookieAuth(REFRESH_TOKEN_COOKIE_NAME)
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/', app, document, {
+  SwaggerModule.setup('/docs', app, document, {
     customCss: `${styles}`,
   });
 }
