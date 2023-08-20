@@ -23,16 +23,15 @@ export class UserService {
     });
   }
 
-  async update(id: string, user: UpdateUserDTO): Promise<User> {
-    await this.findOne(id, true); // Trying to find a user to update
+  async update(id: string, currentUserId: string, user: UpdateUserDTO): Promise<User> {
+    // Trying to find a user to update
+    await this.findOne(id, true);
+    // Checking if user is trying to update himself
+    if (id !== currentUserId) throw new ForbiddenException("User can't be updated");
 
     return this.prisma.user.update({
-      where: {
-        id: id,
-      },
-      data: {
-        ...user,
-      },
+      where: { id: id },
+      data: { ...user },
     });
   }
 

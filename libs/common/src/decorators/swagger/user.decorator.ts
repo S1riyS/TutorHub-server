@@ -28,6 +28,7 @@ export function UserUpdateSwaggerDecorator() {
     ApiOperation({ summary: 'Updates user with given ID' }),
     ApiBody({ type: UpdateUserDTO }),
     ApiOkResponse({ type: UserResponse }),
+    ApiForbiddenResponse({ description: "User can't be updated" }),
     ApiNotFoundResponse({ description: 'User not found' }),
     ApiBearerAuth('JWT-auth'),
   );

@@ -47,8 +47,12 @@ export class UserController {
 
   @Put(':id')
   @UserUpdateSwaggerDecorator()
-  async update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateUserDTO) {
-    const user = await this.userService.update(id, dto);
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser('id') currentUserId: string,
+    @Body() dto: UpdateUserDTO,
+  ) {
+    const user = await this.userService.update(id, currentUserId, dto);
     return new UserResponse(user);
   }
 
