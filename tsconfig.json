@@ -24,11 +24,29 @@
       "@prisma/*": [
         "src/prisma/*"
       ],
+      "@auth": [
+        "src/auth"
+      ],
+      "@auth/*": [
+        "src/auth/*"
+      ],
       "@user": [
         "src/user"
       ],
       "@user/*": [
         "src/user/*"
+      ],
+      "@tutor": [
+        "src/tutor"
+      ],
+      "@tutor/*": [
+        "src/tutor/*"
+      ],
+      "@student": [
+        "src/student"
+      ],
+      "@student/*": [
+        "src/student/*"
       ],
       "@common": [
         "libs/common/src"

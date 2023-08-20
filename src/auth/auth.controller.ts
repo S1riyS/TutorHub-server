@@ -6,17 +6,13 @@ import { Tokens } from './interfaces';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Cookie, Public, UserAgent } from '@common/decorators';
-import {
-  ApiBadRequestResponse,
-  ApiCookieAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
-import { UserResponse } from '@user/responses';
-import { TokensResponse } from './responses';
+import { ApiTags } from '@nestjs/swagger';
 import { REFRESH_TOKEN_COOKIE_NAME } from '@common/constants';
+import {
+  AuthLoginSwaggerDecorator,
+  AuthRefreshTokensSwaggerDecorator,
+  AuthRegistrationSwaggerDecorator,
+} from '@common/decorators/swagger';
 
 @Public()
 @Controller('auth')
@@ -28,28 +24,21 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  @ApiOperation({ summary: 'Registration of new user' })
-  @ApiOkResponse({ type: UserResponse })
-  @ApiBadRequestResponse({ description: 'User with this credentials already exists' })
+  @AuthRegistrationSwaggerDecorator()
   register(@Body() dto: RegisterDTO) {
     console.log(dto);
     return this.authService.register(dto);
   }
 
   @Post('login')
-  @ApiOperation({ summary: 'User login to the system' })
-  @ApiOkResponse({ type: TokensResponse })
-  @ApiUnauthorizedResponse({ description: 'Incorrect email or password' })
+  @AuthLoginSwaggerDecorator()
   async login(@Body() dto: LoginDTO, @Res() response: Response, @UserAgent() userAgent: string) {
     const tokens = await this.authService.login(dto, userAgent);
     this.setRefreshTokenToCookies(tokens, response);
   }
 
   @Get('refresh-tokens')
-  @ApiOperation({ summary: 'Generates new pair of tokens (access and refresh)' })
-  @ApiOkResponse({ type: TokensResponse })
-  @ApiUnauthorizedResponse({ description: 'Something wrong with token' })
-  @ApiCookieAuth()
+  @AuthRefreshTokensSwaggerDecorator()
   async refreshTokens(
     @Cookie(REFRESH_TOKEN_COOKIE_NAME) refreshToken: string,
     @Res() response: Response,

@@ -14,29 +14,23 @@ import {
 import { StudentService } from './student.service';
 import { CreateStudentProfileDTO, UpdateStudentProfileDTO } from './dto';
 import { StudentProfileResponse } from './responses';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiForbiddenResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { Public } from '@common/decorators';
+import {
+  StudentCreateProfileSwaggerDecorator,
+  StudentFindOneSwaggerDecorator,
+  StudentUpdateProfileSwaggerDecorator,
+} from '@common/decorators/swagger/';
 
 @Controller('students')
-@ApiTags('Students')
 @UseInterceptors(ClassSerializerInterceptor)
+@ApiTags('Students')
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
   @Get(':userId/profile')
   @Public()
-  @ApiOperation({ summary: "Retrieves student's profile with given userID" })
-  @ApiOkResponse({ type: StudentProfileResponse })
-  @ApiNotFoundResponse({ description: 'Profile not found' })
+  @StudentFindOneSwaggerDecorator()
   async findOne(@Param('userId', ParseUUIDPipe) userId: string) {
     const profile = await this.studentService.findOneProfile(userId);
     return new StudentProfileResponse(profile);
@@ -44,12 +38,7 @@ export class StudentController {
 
   @Post(':userId/profile')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Creates profile for student with given userID' })
-  @ApiCreatedResponse({ type: StudentProfileResponse })
-  @ApiBadRequestResponse({ description: 'This student already has a profile' })
-  @ApiForbiddenResponse({ description: 'User is not student' })
-  @ApiNotFoundResponse({ description: 'User not found' })
-  @ApiBearerAuth('JWT-auth')
+  @StudentCreateProfileSwaggerDecorator()
   async createProfile(
     @Param('userId', ParseUUIDPipe) userId: string,
     @Body() createStudentDto: CreateStudentProfileDTO,
@@ -59,11 +48,7 @@ export class StudentController {
   }
 
   @Put(':userId/profile')
-  @ApiOperation({ summary: 'Updates profile of student with given userID' })
-  @ApiOkResponse({ type: StudentProfileResponse })
-  @ApiBadRequestResponse({ description: 'This user does not have a profile' })
-  @ApiNotFoundResponse({ description: 'User not found' })
-  @ApiBearerAuth('JWT-auth')
+  @StudentUpdateProfileSwaggerDecorator()
   async updateProfile(
     @Param('userId', ParseUUIDPipe) userId: string,
     @Body() updateStudentDto: UpdateStudentProfileDTO,

@@ -11,10 +11,16 @@ import {
 } from '@nestjs/common';
 import { UserService } from '@user/user.service';
 import { UpdateUserDTO } from '@user/dto';
-import { DeleteResponse, UserResponse } from '@user/responses';
+import { UserResponse } from '@user/responses';
 import { User } from '@prisma/client';
-import { ApiBearerAuth, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { Public } from '@common/decorators';
+import {
+  UserDeleteSwaggerDecorator,
+  UserFindAllSwaggerDecorator,
+  UserFindOneSwaggerDecorator,
+  UserUpdateSwaggerDecorator,
+} from '@common/decorators/swagger';
 
 @Controller('users')
 @ApiTags('Users')
@@ -24,8 +30,7 @@ export class UserController {
 
   @Get()
   @Public()
-  @ApiOperation({ summary: 'Retrieves all users' })
-  @ApiOkResponse({ type: [UserResponse] })
+  @UserFindAllSwaggerDecorator()
   async findAll() {
     const users = await this.userService.findAll();
     return users.map((user: User) => new UserResponse(user));
@@ -33,28 +38,21 @@ export class UserController {
 
   @Get(':id')
   @Public()
-  @ApiOperation({ summary: 'Retrieves user with given ID' })
-  @ApiOkResponse({ type: UserResponse })
-  @ApiNotFoundResponse({ description: 'User not found' })
+  @UserFindOneSwaggerDecorator()
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const user = await this.userService.findOne(id, true);
     return new UserResponse(user);
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Updates user with given ID' })
-  @ApiOkResponse({ type: UserResponse })
-  @ApiNotFoundResponse({ description: 'User not found' })
-  @ApiBearerAuth('JWT-auth')
+  @UserUpdateSwaggerDecorator()
   async update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateUserDTO) {
     const user = await this.userService.update(id, dto);
     return new UserResponse(user);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Deletes user with given ID' })
-  @ApiOkResponse({ type: DeleteResponse })
-  @ApiBearerAuth('JWT-auth')
+  @UserDeleteSwaggerDecorator()
   async delete(@Param('id', ParseUUIDPipe) id: string) {
     return this.userService.delete(id);
   }

@@ -15,18 +15,17 @@ import {
 import { TutorService } from './tutor.service';
 import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO, UpdateTutorProfileDTO } from './dto';
 import { AchievementResponse, FullTutorProfileResponse, TutorProfileResponse } from './responses';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiConsumes,
-  ApiCreatedResponse,
-  ApiForbiddenResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { Public } from '@common/decorators';
+import {
+  TutorAddAchievementSwaggerDecorator,
+  TutorConfirmAchievementSwaggerDecorator,
+  TutorCreateProfileSwaggerDecorator,
+  TutorDeleteAchievementSwaggerDecorator,
+  TutorFindOneSwaggerDecorator,
+  TutorUpdateAchievementSwaggerDecorator,
+  TutorUpdateProfileSwaggerDecorator,
+} from '@common/decorators/swagger';
 
 @Controller('tutors')
 @ApiTags('Tutors')
@@ -36,9 +35,7 @@ export class TutorController {
 
   @Get(':userId')
   @Public()
-  @ApiOperation({ summary: "Retrieves tutor's profile with given userID" })
-  @ApiOkResponse({ type: FullTutorProfileResponse })
-  @ApiNotFoundResponse({ description: 'User not found' })
+  @TutorFindOneSwaggerDecorator()
   async findOne(@Param('userId', ParseUUIDPipe) userId: string) {
     const profile = await this.tutorService.findOneProfile(userId);
     return new FullTutorProfileResponse(profile);
@@ -46,23 +43,14 @@ export class TutorController {
 
   @Post(':userId/profile')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Creates profile for tutor with given userID' })
-  @ApiCreatedResponse({ type: TutorProfileResponse })
-  @ApiBadRequestResponse({ description: 'This tutor already has a profile' })
-  @ApiForbiddenResponse({ description: 'User is not tutor' })
-  @ApiNotFoundResponse({ description: 'User not found' })
-  @ApiBearerAuth('JWT-auth')
+  @TutorCreateProfileSwaggerDecorator()
   async createProfile(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateTutorProfileDTO) {
     const profile = await this.tutorService.createProfile(userId, dto);
     return new TutorProfileResponse(profile);
   }
 
   @Put(':userId/profile')
-  @ApiOperation({ summary: 'Updates profile of tutor with given userID' })
-  @ApiOkResponse({ type: TutorProfileResponse })
-  @ApiBadRequestResponse({ description: 'This user does not have a profile' })
-  @ApiNotFoundResponse({ description: 'User not found' })
-  @ApiBearerAuth('JWT-auth')
+  @TutorUpdateProfileSwaggerDecorator()
   async updateProfile(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: UpdateTutorProfileDTO) {
     const updatedProfile = await this.tutorService.updateProfile(userId, dto);
     return new TutorProfileResponse(updatedProfile);
@@ -70,23 +58,14 @@ export class TutorController {
 
   @Post(':userId/achievements')
   @HttpCode(HttpStatus.CREATED)
-  @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Creates achievement for tutor with given userId' })
-  @ApiCreatedResponse({ type: AchievementResponse })
-  @ApiNotFoundResponse({ description: "Tutor's profile not found" })
-  @ApiBearerAuth('JWT-auth')
+  @TutorAddAchievementSwaggerDecorator()
   async addAchievement(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateAchievementDTO) {
     const achievement = await this.tutorService.addAchievement(userId, dto);
     return new AchievementResponse(achievement);
   }
 
   @Put(':userId/achievements/:achievementId')
-  @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Updates achievement for tutor with given userId' })
-  @ApiOkResponse({ type: AchievementResponse })
-  @ApiForbiddenResponse({ description: 'Confirmed achievement can not be updated' })
-  @ApiNotFoundResponse({ description: "Tutor's profile not found or This tutor does not have such an achievement" })
-  @ApiBearerAuth('JWT-auth')
+  @TutorUpdateAchievementSwaggerDecorator()
   async updateAchievement(
     @Param('achievementId', ParseUUIDPipe) achievementId: string,
     @Param('userId', ParseUUIDPipe) userId: string,
@@ -97,10 +76,7 @@ export class TutorController {
   }
 
   @Delete(':userId/achievements/:achievementId')
-  @ApiOperation({ summary: 'Deletes achievement' })
-  @ApiOkResponse()
-  @ApiNotFoundResponse({ description: "Tutor's profile not found or This tutor does not have such an achievement" })
-  @ApiBearerAuth('JWT-auth')
+  @TutorDeleteAchievementSwaggerDecorator()
   async deleteAchievement(
     @Param('achievementId', ParseUUIDPipe) achievementId: string,
     @Param('userId', ParseUUIDPipe) userId: string,
@@ -109,10 +85,7 @@ export class TutorController {
   }
 
   @Put(':userId/achievements/:achievementId/confirm')
-  @ApiOperation({ summary: 'Sets isConfirmed field of achievement to TRUE' })
-  @ApiOkResponse({ type: AchievementResponse })
-  @ApiNotFoundResponse({ description: "Tutor's profile not found or This tutor does not have such an achievement" })
-  @ApiBearerAuth('JWT-auth')
+  @TutorConfirmAchievementSwaggerDecorator()
   async confirmAchievement(
     @Param('achievementId', ParseUUIDPipe) achievementId: string,
     @Param('userId', ParseUUIDPipe) userId: string,
