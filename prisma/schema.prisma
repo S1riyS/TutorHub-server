@@ -86,6 +86,20 @@ model StudentProfile {
   @@map("student_profiles")
 }
 
+model Subject {
+  id     String  @id @default(uuid())
+  name   String  @unique
+  topics Topic[]
+}
+
+model Topic {
+  id      String  @id @default(uuid())
+  name    String
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  subjectId String
+}
+
 enum TeachingFormat {
   REMOTELY
   AT_HOME
