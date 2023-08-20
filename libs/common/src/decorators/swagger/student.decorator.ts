@@ -22,7 +22,7 @@ export function StudentFindOneSwaggerDecorator() {
 
 export function StudentCreateProfileSwaggerDecorator() {
   return applyDecorators(
-    ApiOperation({ summary: 'Creates profile for student with given userID' }),
+    ApiOperation({ summary: 'Creates profile for authorized student' }),
     ApiBody({ type: CreateStudentProfileDTO }),
     ApiCreatedResponse({ type: StudentProfileResponse }),
     ApiBadRequestResponse({ description: 'This student already has a profile' }),
@@ -34,7 +34,7 @@ export function StudentCreateProfileSwaggerDecorator() {
 
 export function StudentUpdateProfileSwaggerDecorator() {
   return applyDecorators(
-    ApiOperation({ summary: 'Updates profile of student with given userID' }),
+    ApiOperation({ summary: 'Updates profile of authorized student' }),
     ApiBody({ type: UpdateStudentProfileDTO }),
     ApiOkResponse({ type: StudentProfileResponse }),
     ApiBadRequestResponse({ description: 'This user does not have a profile' }),
