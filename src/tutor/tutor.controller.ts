@@ -41,49 +41,45 @@ export class TutorController {
     return new FullTutorProfileResponse(profile);
   }
 
-  @Post(':userId/profile')
+  @Post('self/profile')
   @HttpCode(HttpStatus.CREATED)
   @TutorCreateProfileSwaggerDecorator()
-  async createProfile(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateTutorProfileDTO) {
+  async createProfile(@CurrentUser('id') userId: string, @Body() dto: CreateTutorProfileDTO) {
     const profile = await this.tutorService.createProfile(userId, dto);
     return new TutorProfileResponse(profile);
   }
 
-  @Put(':userId/profile')
+  @Put('self/profile')
   @TutorUpdateProfileSwaggerDecorator()
-  async updateProfile(
-    @Param('userId', ParseUUIDPipe) userId: string,
-    @CurrentUser('id') currentUserId: string,
-    @Body() dto: UpdateTutorProfileDTO,
-  ) {
-    const updatedProfile = await this.tutorService.updateProfile(userId, currentUserId, dto);
+  async updateProfile(@CurrentUser('id') userId: string, @Body() dto: UpdateTutorProfileDTO) {
+    const updatedProfile = await this.tutorService.updateProfile(userId, dto);
     return new TutorProfileResponse(updatedProfile);
   }
 
-  @Post(':userId/achievements')
+  @Post('self/achievements')
   @HttpCode(HttpStatus.CREATED)
   @TutorAddAchievementSwaggerDecorator()
-  async addAchievement(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateAchievementDTO) {
+  async addAchievement(@CurrentUser('id') userId: string, @Body() dto: CreateAchievementDTO) {
     const achievement = await this.tutorService.addAchievement(userId, dto);
     return new AchievementResponse(achievement);
   }
 
-  @Put(':userId/achievements/:achievementId')
+  @Put('self/achievements/:achievementId')
   @TutorUpdateAchievementSwaggerDecorator()
   async updateAchievement(
     @Param('achievementId', ParseUUIDPipe) achievementId: string,
-    @Param('userId', ParseUUIDPipe) userId: string,
+    @CurrentUser('id') userId: string,
     @Body() dto: UpdateAchievementDTO,
   ) {
     const achievement = await this.tutorService.updateAchievement(userId, achievementId, dto);
     return new AchievementResponse(achievement);
   }
 
-  @Delete(':userId/achievements/:achievementId')
+  @Delete('self/achievements/:achievementId')
   @TutorDeleteAchievementSwaggerDecorator()
   async deleteAchievement(
+    @CurrentUser('id') userId: string,
     @Param('achievementId', ParseUUIDPipe) achievementId: string,
-    @Param('userId', ParseUUIDPipe) userId: string,
   ) {
     return this.tutorService.deleteAchievement(userId, achievementId);
   }

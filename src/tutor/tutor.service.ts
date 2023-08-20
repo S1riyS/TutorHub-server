@@ -40,7 +40,7 @@ export class TutorService {
     });
   }
 
-  async updateProfile(userId: string, currentUserId: string, dto: UpdateTutorProfileDTO) {
+  async updateProfile(userId: string, dto: UpdateTutorProfileDTO) {
     // Checking if user exists
     await this.userService.findOne(userId, true);
 
@@ -49,9 +49,6 @@ export class TutorService {
       where: { userId: userId },
     });
     if (!profileExists) throw new BadRequestException('This user does not have a profile');
-
-    // Checking if tutor tries to update his own profile
-    if (userId !== currentUserId) throw new ForbiddenException("Profile can't be updated");
 
     return this.prisma.tutorProfile.update({
       where: {
