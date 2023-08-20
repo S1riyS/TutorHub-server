@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
-import { User } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 import { genSalt, hash } from 'bcrypt';
 import { CreateUserDTO, UpdateUserDTO } from '@user/dto';
 import { DeleteResponse } from '@user/responses';
+import { JwtPayload } from '@auth/interfaces';
 
 @Injectable()
 export class UserService {
@@ -53,15 +54,14 @@ export class UserService {
     return this.prisma.user.findMany();
   }
 
-  async delete(id: string): Promise<DeleteResponse> {
-    //   TODO: add check if user tries to delete himself of it is admin
+  async delete(id: string, currentUser: JwtPayload): Promise<DeleteResponse> {
+    if (currentUser.id !== id || currentUser.role !== Role.ADMIN) {
+      throw new ForbiddenException("User can't be deleted");
+    }
+
     return this.prisma.user.delete({
-      where: {
-        id: id,
-      },
-      select: {
-        id: true,
-      },
+      where: { id: id },
+      select: { id: true },
     });
   }
 

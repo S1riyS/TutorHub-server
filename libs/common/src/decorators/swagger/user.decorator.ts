@@ -1,5 +1,12 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { UserResponse } from '@user/responses';
 import { UpdateUserDTO } from '@user/dto';
 import { DeleteResponse } from '@common/responses';
@@ -30,6 +37,7 @@ export function UserDeleteSwaggerDecorator() {
   return applyDecorators(
     ApiOperation({ summary: 'Deletes user with given ID' }),
     ApiOkResponse({ type: DeleteResponse }),
+    ApiForbiddenResponse({ description: "User can't be deleted" }),
     ApiBearerAuth('JWT-auth'),
   );
 }
