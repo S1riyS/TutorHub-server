@@ -25,7 +25,7 @@ export function UserFindOneSwaggerDecorator() {
 
 export function UserUpdateSwaggerDecorator() {
   return applyDecorators(
-    ApiOperation({ summary: 'Updates user with given ID' }),
+    ApiOperation({ summary: 'Updates authorized user' }),
     ApiBody({ type: UpdateUserDTO }),
     ApiOkResponse({ type: UserResponse }),
     ApiForbiddenResponse({ description: "User can't be updated" }),
