@@ -15,12 +15,13 @@ import { StudentService } from './student.service';
 import { CreateStudentProfileDTO, UpdateStudentProfileDTO } from './dto';
 import { StudentProfileResponse } from './responses';
 import { ApiTags } from '@nestjs/swagger';
-import { Public } from '@common/decorators';
+import { CurrentUser, Public, Roles } from '@common/decorators';
 import {
   StudentCreateProfileSwaggerDecorator,
   StudentFindOneSwaggerDecorator,
   StudentUpdateProfileSwaggerDecorator,
 } from '@common/decorators/swagger/';
+import { Role } from '@prisma/client';
 
 @Controller('students')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -28,7 +29,7 @@ import {
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
-  @Get(':userId/profile')
+  @Get(':userId')
   @Public()
   @StudentFindOneSwaggerDecorator()
   async findOne(@Param('userId', ParseUUIDPipe) userId: string) {
@@ -36,23 +37,18 @@ export class StudentController {
     return new StudentProfileResponse(profile);
   }
 
-  @Post(':userId/profile')
+  @Post('self/profile')
   @HttpCode(HttpStatus.CREATED)
   @StudentCreateProfileSwaggerDecorator()
-  async createProfile(
-    @Param('userId', ParseUUIDPipe) userId: string,
-    @Body() createStudentDto: CreateStudentProfileDTO,
-  ) {
+  async createProfile(@CurrentUser('id') userId: string, @Body() createStudentDto: CreateStudentProfileDTO) {
     const profile = await this.studentService.createProfile(userId, createStudentDto);
     return new StudentProfileResponse(profile);
   }
 
-  @Put(':userId/profile')
+  @Put('self/profile')
+  @Roles(Role.STUDENT)
   @StudentUpdateProfileSwaggerDecorator()
-  async updateProfile(
-    @Param('userId', ParseUUIDPipe) userId: string,
-    @Body() updateStudentDto: UpdateStudentProfileDTO,
-  ) {
+  async updateProfile(@CurrentUser('id') userId: string, @Body() updateStudentDto: UpdateStudentProfileDTO) {
     const profile = await this.studentService.updateProfile(userId, updateStudentDto);
     return new StudentProfileResponse(profile);
   }

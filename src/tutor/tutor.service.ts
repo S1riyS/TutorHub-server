@@ -2,7 +2,7 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { PrismaService } from '@prisma/prisma.service';
 import { UserService } from '@user/user.service';
 import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO, UpdateTutorProfileDTO } from './dto';
-import { Role, TutorAchievement, TutorProfile } from '@prisma/client';
+import { TutorAchievement, TutorProfile } from '@prisma/client';
 
 @Injectable()
 export class TutorService {
@@ -23,7 +23,6 @@ export class TutorService {
   async createProfile(userId: string, dto: CreateTutorProfileDTO) {
     const candidate = await this.userService.findOne(userId);
     if (!candidate) throw new NotFoundException('User not found');
-    if (candidate.role !== Role.TUTOR) throw new ForbiddenException();
 
     const profileExists = await this.prisma.tutorProfile.findFirst({
       where: {
@@ -41,13 +40,12 @@ export class TutorService {
   }
 
   async updateProfile(userId: string, dto: UpdateTutorProfileDTO) {
-    const candidate = await this.userService.findOne(userId);
-    if (!candidate) throw new NotFoundException('User not found');
+    // Checking if user exists
+    await this.userService.findOne(userId, true);
 
+    // Checking if user has tutor profile
     const profileExists = await this.prisma.tutorProfile.findFirst({
-      where: {
-        userId: userId,
-      },
+      where: { userId: userId },
     });
     if (!profileExists) throw new BadRequestException('This user does not have a profile');
 

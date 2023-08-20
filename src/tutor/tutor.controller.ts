@@ -16,7 +16,7 @@ import { TutorService } from './tutor.service';
 import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO, UpdateTutorProfileDTO } from './dto';
 import { AchievementResponse, FullTutorProfileResponse, TutorProfileResponse } from './responses';
 import { ApiTags } from '@nestjs/swagger';
-import { Public } from '@common/decorators';
+import { CurrentUser, Public, Roles } from '@common/decorators';
 import {
   TutorAddAchievementSwaggerDecorator,
   TutorConfirmAchievementSwaggerDecorator,
@@ -26,6 +26,7 @@ import {
   TutorUpdateAchievementSwaggerDecorator,
   TutorUpdateProfileSwaggerDecorator,
 } from '@common/decorators/swagger';
+import { Role } from '@prisma/client';
 
 @Controller('tutors')
 @ApiTags('Tutors')
@@ -41,50 +42,56 @@ export class TutorController {
     return new FullTutorProfileResponse(profile);
   }
 
-  @Post(':userId/profile')
+  @Post('self/profile')
+  @Roles(Role.TUTOR)
   @HttpCode(HttpStatus.CREATED)
   @TutorCreateProfileSwaggerDecorator()
-  async createProfile(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateTutorProfileDTO) {
+  async createProfile(@CurrentUser('id') userId: string, @Body() dto: CreateTutorProfileDTO) {
     const profile = await this.tutorService.createProfile(userId, dto);
     return new TutorProfileResponse(profile);
   }
 
-  @Put(':userId/profile')
+  @Put('self/profile')
+  @Roles(Role.TUTOR)
   @TutorUpdateProfileSwaggerDecorator()
-  async updateProfile(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: UpdateTutorProfileDTO) {
+  async updateProfile(@CurrentUser('id') userId: string, @Body() dto: UpdateTutorProfileDTO) {
     const updatedProfile = await this.tutorService.updateProfile(userId, dto);
     return new TutorProfileResponse(updatedProfile);
   }
 
-  @Post(':userId/achievements')
+  @Post('self/achievements')
+  @Roles(Role.TUTOR)
   @HttpCode(HttpStatus.CREATED)
   @TutorAddAchievementSwaggerDecorator()
-  async addAchievement(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: CreateAchievementDTO) {
+  async addAchievement(@CurrentUser('id') userId: string, @Body() dto: CreateAchievementDTO) {
     const achievement = await this.tutorService.addAchievement(userId, dto);
     return new AchievementResponse(achievement);
   }
 
-  @Put(':userId/achievements/:achievementId')
+  @Put('self/achievements/:achievementId')
+  @Roles(Role.TUTOR)
   @TutorUpdateAchievementSwaggerDecorator()
   async updateAchievement(
     @Param('achievementId', ParseUUIDPipe) achievementId: string,
-    @Param('userId', ParseUUIDPipe) userId: string,
+    @CurrentUser('id') userId: string,
     @Body() dto: UpdateAchievementDTO,
   ) {
     const achievement = await this.tutorService.updateAchievement(userId, achievementId, dto);
     return new AchievementResponse(achievement);
   }
 
-  @Delete(':userId/achievements/:achievementId')
+  @Delete('self/achievements/:achievementId')
+  @Roles(Role.TUTOR)
   @TutorDeleteAchievementSwaggerDecorator()
   async deleteAchievement(
+    @CurrentUser('id') userId: string,
     @Param('achievementId', ParseUUIDPipe) achievementId: string,
-    @Param('userId', ParseUUIDPipe) userId: string,
   ) {
     return this.tutorService.deleteAchievement(userId, achievementId);
   }
 
   @Put(':userId/achievements/:achievementId/confirm')
+  @Roles(Role.ADMIN)
   @TutorConfirmAchievementSwaggerDecorator()
   async confirmAchievement(
     @Param('achievementId', ParseUUIDPipe) achievementId: string,

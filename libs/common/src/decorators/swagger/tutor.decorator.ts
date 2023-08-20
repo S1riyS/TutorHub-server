@@ -24,7 +24,7 @@ export function TutorFindOneSwaggerDecorator() {
 
 export function TutorCreateProfileSwaggerDecorator() {
   return applyDecorators(
-    ApiOperation({ summary: 'Creates profile for tutor with given userID' }),
+    ApiOperation({ summary: 'Creates profile for authorized tutor' }),
     ApiBody({ type: CreateTutorProfileDTO }),
     ApiCreatedResponse({ type: TutorProfileResponse }),
     ApiBadRequestResponse({ description: 'This tutor already has a profile' }),
@@ -36,10 +36,11 @@ export function TutorCreateProfileSwaggerDecorator() {
 
 export function TutorUpdateProfileSwaggerDecorator() {
   return applyDecorators(
-    ApiOperation({ summary: 'Updates profile of tutor with given userID' }),
+    ApiOperation({ summary: 'Updates profile of authorized tutor' }),
     ApiBody({ type: UpdateTutorProfileDTO }),
     ApiOkResponse({ type: TutorProfileResponse }),
     ApiBadRequestResponse({ description: 'This user does not have a profile' }),
+    ApiForbiddenResponse({ description: "Profile can't be updated" }),
     ApiNotFoundResponse({ description: 'User not found' }),
     ApiBearerAuth('JWT-auth'),
   );
@@ -49,7 +50,7 @@ export function TutorAddAchievementSwaggerDecorator() {
   return applyDecorators(
     ApiConsumes('multipart/form-data'),
     ApiBody({ type: CreateAchievementDTO }),
-    ApiOperation({ summary: 'Creates achievement for tutor with given userId' }),
+    ApiOperation({ summary: 'Creates new achievement for authorized tutor' }),
     ApiCreatedResponse({ type: AchievementResponse }),
     ApiNotFoundResponse({ description: "Tutor's profile not found" }),
     ApiBearerAuth('JWT-auth'),
@@ -59,7 +60,7 @@ export function TutorAddAchievementSwaggerDecorator() {
 export function TutorUpdateAchievementSwaggerDecorator() {
   return applyDecorators(
     ApiConsumes('multipart/form-data'),
-    ApiOperation({ summary: 'Updates achievement for tutor with given userId' }),
+    ApiOperation({ summary: 'Updates achievement of authorized tutor' }),
     ApiBody({ type: UpdateAchievementDTO }),
     ApiOkResponse({ type: AchievementResponse }),
     ApiForbiddenResponse({ description: 'Confirmed achievement can not be updated' }),
@@ -70,7 +71,7 @@ export function TutorUpdateAchievementSwaggerDecorator() {
 
 export function TutorDeleteAchievementSwaggerDecorator() {
   return applyDecorators(
-    ApiOperation({ summary: 'Deletes achievement' }),
+    ApiOperation({ summary: 'Deletes achievement of authorized tutor' }),
     ApiOkResponse({ type: DeleteResponse }),
     ApiNotFoundResponse({ description: "Tutor's profile not found or This tutor does not have such an achievement" }),
     ApiBearerAuth('JWT-auth'),
@@ -79,7 +80,10 @@ export function TutorDeleteAchievementSwaggerDecorator() {
 
 export function TutorConfirmAchievementSwaggerDecorator() {
   return applyDecorators(
-    ApiOperation({ summary: 'Sets isConfirmed field of achievement to TRUE' }),
+    ApiOperation({
+      summary: 'Confirmation of achievement',
+      description: 'Sets isConfirmed field of achievement to TRUE (ADMIN ONLY)',
+    }),
     ApiOkResponse({ type: AchievementResponse }),
     ApiNotFoundResponse({ description: "Tutor's profile not found or This tutor does not have such an achievement" }),
     ApiBearerAuth('JWT-auth'),

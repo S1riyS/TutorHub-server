@@ -14,13 +14,14 @@ import { UpdateUserDTO } from '@user/dto';
 import { UserResponse } from '@user/responses';
 import { User } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
-import { Public } from '@common/decorators';
+import { CurrentUser, Public } from '@common/decorators';
 import {
   UserDeleteSwaggerDecorator,
   UserFindAllSwaggerDecorator,
   UserFindOneSwaggerDecorator,
   UserUpdateSwaggerDecorator,
 } from '@common/decorators/swagger';
+import { JwtPayload } from '@auth/interfaces';
 
 @Controller('users')
 @ApiTags('Users')
@@ -44,16 +45,16 @@ export class UserController {
     return new UserResponse(user);
   }
 
-  @Put(':id')
+  @Put('self')
   @UserUpdateSwaggerDecorator()
-  async update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateUserDTO) {
+  async update(@CurrentUser('id') id: string, @Body() dto: UpdateUserDTO) {
     const user = await this.userService.update(id, dto);
     return new UserResponse(user);
   }
 
   @Delete(':id')
   @UserDeleteSwaggerDecorator()
-  async delete(@Param('id', ParseUUIDPipe) id: string) {
-    return this.userService.delete(id);
+  async delete(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() currentUser: JwtPayload) {
+    return this.userService.delete(id, currentUser);
   }
 }
