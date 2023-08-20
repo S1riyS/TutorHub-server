@@ -16,7 +16,7 @@ import { TutorService } from './tutor.service';
 import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO, UpdateTutorProfileDTO } from './dto';
 import { AchievementResponse, FullTutorProfileResponse, TutorProfileResponse } from './responses';
 import { ApiTags } from '@nestjs/swagger';
-import { CurrentUser, Public } from '@common/decorators';
+import { CurrentUser, Public, Roles } from '@common/decorators';
 import {
   TutorAddAchievementSwaggerDecorator,
   TutorConfirmAchievementSwaggerDecorator,
@@ -26,6 +26,7 @@ import {
   TutorUpdateAchievementSwaggerDecorator,
   TutorUpdateProfileSwaggerDecorator,
 } from '@common/decorators/swagger';
+import { Role } from '@prisma/client';
 
 @Controller('tutors')
 @ApiTags('Tutors')
@@ -42,6 +43,7 @@ export class TutorController {
   }
 
   @Post('self/profile')
+  @Roles(Role.TUTOR)
   @HttpCode(HttpStatus.CREATED)
   @TutorCreateProfileSwaggerDecorator()
   async createProfile(@CurrentUser('id') userId: string, @Body() dto: CreateTutorProfileDTO) {
@@ -50,6 +52,7 @@ export class TutorController {
   }
 
   @Put('self/profile')
+  @Roles(Role.TUTOR)
   @TutorUpdateProfileSwaggerDecorator()
   async updateProfile(@CurrentUser('id') userId: string, @Body() dto: UpdateTutorProfileDTO) {
     const updatedProfile = await this.tutorService.updateProfile(userId, dto);
@@ -57,6 +60,7 @@ export class TutorController {
   }
 
   @Post('self/achievements')
+  @Roles(Role.TUTOR)
   @HttpCode(HttpStatus.CREATED)
   @TutorAddAchievementSwaggerDecorator()
   async addAchievement(@CurrentUser('id') userId: string, @Body() dto: CreateAchievementDTO) {
@@ -65,6 +69,7 @@ export class TutorController {
   }
 
   @Put('self/achievements/:achievementId')
+  @Roles(Role.TUTOR)
   @TutorUpdateAchievementSwaggerDecorator()
   async updateAchievement(
     @Param('achievementId', ParseUUIDPipe) achievementId: string,
@@ -76,6 +81,7 @@ export class TutorController {
   }
 
   @Delete('self/achievements/:achievementId')
+  @Roles(Role.TUTOR)
   @TutorDeleteAchievementSwaggerDecorator()
   async deleteAchievement(
     @CurrentUser('id') userId: string,
@@ -85,6 +91,7 @@ export class TutorController {
   }
 
   @Put(':userId/achievements/:achievementId/confirm')
+  @Roles(Role.ADMIN)
   @TutorConfirmAchievementSwaggerDecorator()
   async confirmAchievement(
     @Param('achievementId', ParseUUIDPipe) achievementId: string,
