@@ -7,8 +7,8 @@ import {
   HttpStatus,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
-  Put,
   UseInterceptors,
 } from '@nestjs/common';
 import { StudentService } from './student.service';
@@ -45,7 +45,7 @@ export class StudentController {
     return new StudentProfileResponse(profile);
   }
 
-  @Put('self/profile')
+  @Patch('self/profile')
   @Roles(Role.STUDENT)
   @StudentUpdateProfileSwaggerDecorator()
   async updateProfile(@CurrentUser('id') userId: string, @Body() updateStudentDto: UpdateStudentProfileDTO) {

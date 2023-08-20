@@ -6,7 +6,7 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
-  Put,
+  Patch,
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from '@user/user.service';
@@ -45,7 +45,7 @@ export class UserController {
     return new UserResponse(user);
   }
 
-  @Put('self')
+  @Patch('self')
   @UserUpdateSwaggerDecorator()
   async update(@CurrentUser('id') id: string, @Body() dto: UpdateUserDTO) {
     const user = await this.userService.update(id, dto);

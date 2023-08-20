@@ -8,8 +8,8 @@ import {
   HttpStatus,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
-  Put,
   UseInterceptors,
 } from '@nestjs/common';
 import { TutorService } from './tutor.service';
@@ -51,7 +51,7 @@ export class TutorController {
     return new TutorProfileResponse(profile);
   }
 
-  @Put('self/profile')
+  @Patch('self/profile')
   @Roles(Role.TUTOR)
   @TutorUpdateProfileSwaggerDecorator()
   async updateProfile(@CurrentUser('id') userId: string, @Body() dto: UpdateTutorProfileDTO) {
@@ -68,7 +68,7 @@ export class TutorController {
     return new AchievementResponse(achievement);
   }
 
-  @Put('self/achievements/:achievementId')
+  @Patch('self/achievements/:achievementId')
   @Roles(Role.TUTOR)
   @TutorUpdateAchievementSwaggerDecorator()
   async updateAchievement(
@@ -90,7 +90,7 @@ export class TutorController {
     return this.tutorService.deleteAchievement(userId, achievementId);
   }
 
-  @Put(':userId/achievements/:achievementId/confirm')
+  @Patch(':userId/achievements/:achievementId/confirm')
   @Roles(Role.ADMIN)
   @TutorConfirmAchievementSwaggerDecorator()
   async confirmAchievement(
