@@ -15,12 +15,13 @@ import { StudentService } from './student.service';
 import { CreateStudentProfileDTO, UpdateStudentProfileDTO } from './dto';
 import { StudentProfileResponse } from './responses';
 import { ApiTags } from '@nestjs/swagger';
-import { CurrentUser, Public } from '@common/decorators';
+import { CurrentUser, Public, Roles } from '@common/decorators';
 import {
   StudentCreateProfileSwaggerDecorator,
   StudentFindOneSwaggerDecorator,
   StudentUpdateProfileSwaggerDecorator,
 } from '@common/decorators/swagger/';
+import { Role } from '@prisma/client';
 
 @Controller('students')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -45,6 +46,7 @@ export class StudentController {
   }
 
   @Put('self/profile')
+  @Roles(Role.STUDENT)
   @StudentUpdateProfileSwaggerDecorator()
   async updateProfile(@CurrentUser('id') userId: string, @Body() updateStudentDto: UpdateStudentProfileDTO) {
     const profile = await this.studentService.updateProfile(userId, updateStudentDto);
