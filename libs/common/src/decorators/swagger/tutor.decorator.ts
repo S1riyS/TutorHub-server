@@ -40,6 +40,7 @@ export function TutorUpdateProfileSwaggerDecorator() {
     ApiBody({ type: UpdateTutorProfileDTO }),
     ApiOkResponse({ type: TutorProfileResponse }),
     ApiBadRequestResponse({ description: 'This user does not have a profile' }),
+    ApiForbiddenResponse({ description: "Profile can't be updated" }),
     ApiNotFoundResponse({ description: 'User not found' }),
     ApiBearerAuth('JWT-auth'),
   );

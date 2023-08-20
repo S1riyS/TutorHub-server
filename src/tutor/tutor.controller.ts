@@ -16,7 +16,7 @@ import { TutorService } from './tutor.service';
 import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO, UpdateTutorProfileDTO } from './dto';
 import { AchievementResponse, FullTutorProfileResponse, TutorProfileResponse } from './responses';
 import { ApiTags } from '@nestjs/swagger';
-import { Public } from '@common/decorators';
+import { CurrentUser, Public } from '@common/decorators';
 import {
   TutorAddAchievementSwaggerDecorator,
   TutorConfirmAchievementSwaggerDecorator,
@@ -51,8 +51,12 @@ export class TutorController {
 
   @Put(':userId/profile')
   @TutorUpdateProfileSwaggerDecorator()
-  async updateProfile(@Param('userId', ParseUUIDPipe) userId: string, @Body() dto: UpdateTutorProfileDTO) {
-    const updatedProfile = await this.tutorService.updateProfile(userId, dto);
+  async updateProfile(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @CurrentUser('id') currentUserId: string,
+    @Body() dto: UpdateTutorProfileDTO,
+  ) {
+    const updatedProfile = await this.tutorService.updateProfile(userId, currentUserId, dto);
     return new TutorProfileResponse(updatedProfile);
   }
 

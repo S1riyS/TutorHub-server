@@ -40,16 +40,18 @@ export class TutorService {
     });
   }
 
-  async updateProfile(userId: string, dto: UpdateTutorProfileDTO) {
-    const candidate = await this.userService.findOne(userId);
-    if (!candidate) throw new NotFoundException('User not found');
+  async updateProfile(userId: string, currentUserId: string, dto: UpdateTutorProfileDTO) {
+    // Checking if user exists
+    await this.userService.findOne(userId, true);
 
+    // Checking if user has tutor profile
     const profileExists = await this.prisma.tutorProfile.findFirst({
-      where: {
-        userId: userId,
-      },
+      where: { userId: userId },
     });
     if (!profileExists) throw new BadRequestException('This user does not have a profile');
+
+    // Checking if tutor tries to update his own profile
+    if (userId !== currentUserId) throw new ForbiddenException("Profile can't be updated");
 
     return this.prisma.tutorProfile.update({
       where: {
