@@ -54,10 +54,10 @@ model TutorProfile {
 }
 
 model TutorDetails {
-  id              String   @id @default(uuid())
+  id              String    @id @default(uuid())
   bio             String?
-  birthDate       DateTime @map("birth_date")
-  careerStartYear Int
+  birthDate       DateTime? @map("birth_date")
+  careerStartYear Int?
 
   profile   TutorProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId String       @unique @map("profile_id")
