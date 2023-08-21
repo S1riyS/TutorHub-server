@@ -27,7 +27,6 @@ export function TutorUpdateDetailsSwaggerDecorator() {
     ApiBody({ type: UpdateDetailsDTO }),
     ApiOkResponse({ type: DetailsResponse }),
     ApiForbiddenResponse({ description: 'Access denied' }),
-    ApiNotFoundResponse({ description: "Tutor's profile not found" }),
   );
 }
 
@@ -37,7 +36,6 @@ export function TutorAddAchievementSwaggerDecorator() {
     ApiBody({ type: CreateAchievementDTO }),
     ApiOperation({ summary: 'Creates new achievement for authorized tutor' }),
     ApiCreatedResponse({ type: AchievementResponse }),
-    ApiNotFoundResponse({ description: "Tutor's profile not found" }),
     ApiBearerAuth('JWT-auth'),
   );
 }
@@ -49,7 +47,7 @@ export function TutorUpdateAchievementSwaggerDecorator() {
     ApiBody({ type: UpdateAchievementDTO }),
     ApiOkResponse({ type: AchievementResponse }),
     ApiForbiddenResponse({ description: 'Confirmed achievement can not be updated' }),
-    ApiNotFoundResponse({ description: "Tutor's profile not found or This tutor does not have such an achievement" }),
+    ApiNotFoundResponse({ description: 'This tutor does not have such an achievement' }),
     ApiBearerAuth('JWT-auth'),
   );
 }
@@ -58,7 +56,7 @@ export function TutorDeleteAchievementSwaggerDecorator() {
   return applyDecorators(
     ApiOperation({ summary: 'Deletes achievement of authorized tutor' }),
     ApiOkResponse({ type: DeleteResponse }),
-    ApiNotFoundResponse({ description: "Tutor's profile not found or This tutor does not have such an achievement" }),
+    ApiNotFoundResponse({ description: 'This tutor does not have such an achievement' }),
     ApiBearerAuth('JWT-auth'),
   );
 }
@@ -70,7 +68,7 @@ export function TutorConfirmAchievementSwaggerDecorator() {
       description: 'Sets isConfirmed field of achievement to TRUE (ADMIN ONLY)',
     }),
     ApiOkResponse({ type: AchievementResponse }),
-    ApiNotFoundResponse({ description: "Tutor's profile not found or This tutor does not have such an achievement" }),
+    ApiNotFoundResponse({ description: 'This tutor does not have such an achievement' }),
     ApiBearerAuth('JWT-auth'),
   );
 }
