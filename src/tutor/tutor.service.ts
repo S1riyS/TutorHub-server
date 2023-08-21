@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
-import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO } from './dto';
+import { CreateAchievementDTO, UpdateAchievementDTO } from './dto';
 import { TutorAchievement, TutorProfile } from '@prisma/client';
 
 @Injectable()
@@ -19,9 +19,14 @@ export class TutorService {
     return profile;
   }
 
-  async createProfile(userId: string, dto: CreateTutorProfileDTO): Promise<TutorProfile> {
+  async createProfile(userId: string): Promise<TutorProfile> {
     return this.prisma.tutorProfile.create({
-      data: { userId: userId, ...dto },
+      data: {
+        userId: userId,
+        details: {
+          create: {},
+        },
+      },
     });
   }
 
