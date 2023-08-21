@@ -1,22 +1,18 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
 import { CreateAchievementDTO, UpdateAchievementDTO, UpdateDetailsDTO } from './dto';
-import { TutorAchievement, TutorDetails, TutorProfile } from '@prisma/client';
+import { TeachingFormat, TutorAchievement, TutorDetails, TutorProfile } from '@prisma/client';
+import { toggleArrayValue } from '@common/utils';
 
 @Injectable()
 export class TutorService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findOneProfile(userId: string, throwWhenNotFound: boolean = false): Promise<TutorProfile | null> {
-    const profile = await this.prisma.tutorProfile.findUnique({
+  async findOneProfile(userId: string): Promise<TutorProfile | null> {
+    return this.prisma.tutorProfile.findUnique({
       where: { userId: userId },
       include: { achievements: true, details: true },
     });
-    if (!profile) {
-      if (throwWhenNotFound) throw new NotFoundException('Profile not found');
-      return null;
-    }
-    return profile;
   }
 
   async createProfile(userId: string): Promise<TutorProfile> {
@@ -36,6 +32,21 @@ export class TutorService {
       where: { profileId: profile.id },
       data: { ...dto },
     });
+  }
+
+  async toggleTeachingFormat(userId: string, format: TeachingFormat): Promise<TeachingFormat[]> {
+    const profile = await this.prisma.tutorProfile.findUnique({
+      where: { userId: userId },
+      select: { teachingFormats: true },
+    });
+
+    const updatedTeachingFormats = toggleArrayValue<TeachingFormat>(profile.teachingFormats, format);
+    await this.prisma.tutorProfile.update({
+      where: { userId: userId },
+      data: { teachingFormats: updatedTeachingFormats },
+    });
+
+    return updatedTeachingFormats;
   }
 
   async addAchievement(userId: string, dto: CreateAchievementDTO): Promise<TutorAchievement> {

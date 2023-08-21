@@ -8,10 +8,13 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { AchievementResponse, DetailsResponse, FullTutorProfileResponse } from '@tutor/responses';
 import { CreateAchievementDTO, UpdateAchievementDTO, UpdateDetailsDTO } from '@tutor/dto';
 import { DeleteResponse } from '@common/responses';
+import { TeachingFormat } from '@prisma/client';
+import { TeachingFormatsResponse } from '@tutor/responses/teaching-formats.response';
 
 export function TutorFindOneSwaggerDecorator() {
   return applyDecorators(
@@ -26,6 +29,18 @@ export function TutorUpdateDetailsSwaggerDecorator() {
     ApiOperation({ summary: 'Updates details of tutor profile (bio, date of birth, etc)' }),
     ApiBody({ type: UpdateDetailsDTO }),
     ApiOkResponse({ type: DetailsResponse }),
+    ApiForbiddenResponse({ description: 'Access denied' }),
+  );
+}
+
+export function TutorToggleTeachingFormatSwaggerDecorator() {
+  return applyDecorators(
+    ApiOperation({
+      summary: 'Adds or removes available teaching formats (eg REMOTELY)',
+      description: 'If tutor already has this teaching format, it will be removed, otherwise it will be added',
+    }),
+    ApiQuery({ name: 'format', enum: TeachingFormat }),
+    ApiOkResponse({ type: TeachingFormatsResponse }),
     ApiForbiddenResponse({ description: 'Access denied' }),
   );
 }

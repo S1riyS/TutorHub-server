@@ -7,9 +7,11 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseEnumPipe,
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseInterceptors,
 } from '@nestjs/common';
 import { TutorService } from './tutor.service';
@@ -22,10 +24,11 @@ import {
   TutorConfirmAchievementSwaggerDecorator,
   TutorDeleteAchievementSwaggerDecorator,
   TutorFindOneSwaggerDecorator,
+  TutorToggleTeachingFormatSwaggerDecorator,
   TutorUpdateAchievementSwaggerDecorator,
   TutorUpdateDetailsSwaggerDecorator,
 } from '@common/decorators/swagger';
-import { Role } from '@prisma/client';
+import { Role, TeachingFormat } from '@prisma/client';
 import { UpdateDetailsDTO } from '@tutor/dto/details.dto';
 
 @Controller('tutors')
@@ -38,7 +41,7 @@ export class TutorController {
   @Public()
   @TutorFindOneSwaggerDecorator()
   async findOne(@Param('userId', ParseUUIDPipe) userId: string) {
-    const profile = await this.tutorService.findOneProfile(userId, true);
+    const profile = await this.tutorService.findOneProfile(userId);
     return new FullTutorProfileResponse(profile);
   }
 
@@ -48,6 +51,16 @@ export class TutorController {
   async updateDetails(@CurrentUser('id') userId: string, @Body() dto: UpdateDetailsDTO) {
     const details = await this.tutorService.updateDetails(userId, dto);
     return new DetailsResponse(details);
+  }
+
+  @Post('self/toggle-teaching-format')
+  @Roles(Role.TUTOR)
+  @TutorToggleTeachingFormatSwaggerDecorator()
+  async toggleTeachingFormat(
+    @CurrentUser('id') userId: string,
+    @Query('format', new ParseEnumPipe(TeachingFormat)) format: TeachingFormat,
+  ) {
+    return this.tutorService.toggleTeachingFormat(userId, format);
   }
 
   @Post('self/achievements')
