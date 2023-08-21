@@ -47,7 +47,7 @@ model TutorProfile {
   details         TutorDetails?
   achievements    TutorAchievement[]
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique @map("user_id")
 
   @@map("tutor_profiles")
@@ -59,7 +59,7 @@ model TutorDetails {
   birthDate       DateTime @map("birth_date")
   careerStartYear Int
 
-  profile   TutorProfile @relation(fields: [profileId], references: [id])
+  profile   TutorProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId String       @unique @map("profile_id")
 
   @@map("tutor_details")
@@ -78,7 +78,7 @@ model TutorAchievement {
 
   isConfirmed Boolean @default(false) @map("is_confirmed")
 
-  TutorProfile   TutorProfile? @relation(fields: [tutorProfileId], references: [id])
+  TutorProfile   TutorProfile? @relation(fields: [tutorProfileId], references: [id], onDelete: Cascade)
   tutorProfileId String?       @map("tutor_profile_id")
 }
 
