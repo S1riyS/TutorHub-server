@@ -4,19 +4,17 @@ import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { DetailsResponse } from '@tutor/responses';
 
-export class TutorProfileResponse extends TutorProfileEntity {
-  constructor(profile: Partial<TutorProfileEntity>) {
-    super();
-    Object.assign(this, profile);
-  }
-}
+export class FullTutorProfileResponse extends TutorProfileEntity {
+  @Type(() => DetailsResponse)
+  @ApiProperty({ type: DetailsResponse })
+  details: DetailsResponse;
 
-export class FullTutorProfileResponse extends TutorProfileResponse {
   @Type(() => AchievementResponse)
   @ApiProperty({ type: [AchievementResponse] })
   achievements: AchievementResponse[];
 
-  @Type(() => DetailsResponse)
-  @ApiProperty({ type: DetailsResponse })
-  details: DetailsResponse;
+  constructor(profile: Partial<TutorProfileEntity>) {
+    super();
+    Object.assign(this, profile);
+  }
 }
