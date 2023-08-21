@@ -10,15 +10,17 @@ export class DetailsEntity implements TutorDetails {
   @ApiPropertyOptional({ example: 'This is going to be REALLY long text...' })
   bio: string | null;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsDateString()
   @ApiPropertyOptional({ example: '2005-07-04T13:00:00.000Z' })
-  birthDate: Date;
+  birthDate: Date | null;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsInt()
   @ApiPropertyOptional({ example: 2020 })
-  careerStartYear: number;
+  careerStartYear: number | null;
 
   @Exclude()
   id: string;
