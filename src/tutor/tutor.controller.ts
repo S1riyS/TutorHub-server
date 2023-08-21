@@ -13,18 +13,16 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { TutorService } from './tutor.service';
-import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO, UpdateTutorProfileDTO } from './dto';
-import { AchievementResponse, FullTutorProfileResponse, TutorProfileResponse } from './responses';
+import { CreateAchievementDTO, UpdateAchievementDTO } from './dto';
+import { AchievementResponse, FullTutorProfileResponse } from './responses';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUser, Public, Roles } from '@common/decorators';
 import {
   TutorAddAchievementSwaggerDecorator,
   TutorConfirmAchievementSwaggerDecorator,
-  TutorCreateProfileSwaggerDecorator,
   TutorDeleteAchievementSwaggerDecorator,
   TutorFindOneSwaggerDecorator,
   TutorUpdateAchievementSwaggerDecorator,
-  TutorUpdateProfileSwaggerDecorator,
 } from '@common/decorators/swagger';
 import { Role } from '@prisma/client';
 
@@ -40,23 +38,6 @@ export class TutorController {
   async findOne(@Param('userId', ParseUUIDPipe) userId: string) {
     const profile = await this.tutorService.findOneProfile(userId, true);
     return new FullTutorProfileResponse(profile);
-  }
-
-  @Post('self/profile')
-  @Roles(Role.TUTOR)
-  @HttpCode(HttpStatus.CREATED)
-  @TutorCreateProfileSwaggerDecorator()
-  async createProfile(@CurrentUser('id') userId: string, @Body() dto: CreateTutorProfileDTO) {
-    const profile = await this.tutorService.createProfile(userId, dto);
-    return new TutorProfileResponse(profile);
-  }
-
-  @Patch('self/profile')
-  @Roles(Role.TUTOR)
-  @TutorUpdateProfileSwaggerDecorator()
-  async updateProfile(@CurrentUser('id') userId: string, @Body() dto: UpdateTutorProfileDTO) {
-    const updatedProfile = await this.tutorService.updateProfile(userId, dto);
-    return new TutorProfileResponse(updatedProfile);
   }
 
   @Post('self/achievements')
