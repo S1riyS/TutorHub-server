@@ -11,12 +11,15 @@ export class TutorService {
     private readonly userService: UserService,
   ) {}
 
-  async findOneProfile(userId) {
+  async findOneProfile(userId: string, throwWhenNotFound: boolean = false): Promise<TutorProfile | null> {
     const profile = await this.prisma.tutorProfile.findUnique({
       where: { userId: userId },
       include: { achievements: true },
     });
-    if (!profile) throw new NotFoundException('Profile not found');
+    if (!profile) {
+      if (throwWhenNotFound) throw new NotFoundException('Profile not found');
+      return null;
+    }
     return profile;
   }
 

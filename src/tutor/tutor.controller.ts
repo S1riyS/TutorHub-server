@@ -38,7 +38,7 @@ export class TutorController {
   @Public()
   @TutorFindOneSwaggerDecorator()
   async findOne(@Param('userId', ParseUUIDPipe) userId: string) {
-    const profile = await this.tutorService.findOneProfile(userId);
+    const profile = await this.tutorService.findOneProfile(userId, true);
     return new FullTutorProfileResponse(profile);
   }
 
