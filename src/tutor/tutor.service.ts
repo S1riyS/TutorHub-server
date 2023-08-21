@@ -1,15 +1,11 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
-import { UserService } from '@user/user.service';
-import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO, UpdateTutorProfileDTO } from './dto';
+import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO } from './dto';
 import { TutorAchievement, TutorProfile } from '@prisma/client';
 
 @Injectable()
 export class TutorService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async findOneProfile(userId: string, throwWhenNotFound: boolean = false): Promise<TutorProfile | null> {
     const profile = await this.prisma.tutorProfile.findUnique({
@@ -23,42 +19,9 @@ export class TutorService {
     return profile;
   }
 
-  async createProfile(userId: string, dto: CreateTutorProfileDTO) {
-    const candidate = await this.userService.findOne(userId);
-    if (!candidate) throw new NotFoundException('User not found');
-
-    const profileExists = await this.prisma.tutorProfile.findFirst({
-      where: {
-        userId: userId,
-      },
-    });
-    if (profileExists) throw new BadRequestException('This user already has a profile');
-
+  async createProfile(userId: string, dto: CreateTutorProfileDTO): Promise<TutorProfile> {
     return this.prisma.tutorProfile.create({
-      data: {
-        userId: userId,
-        ...dto,
-      },
-    });
-  }
-
-  async updateProfile(userId: string, dto: UpdateTutorProfileDTO) {
-    // Checking if user exists
-    await this.userService.findOne(userId, true);
-
-    // Checking if user has tutor profile
-    const profileExists = await this.prisma.tutorProfile.findFirst({
-      where: { userId: userId },
-    });
-    if (!profileExists) throw new BadRequestException('This user does not have a profile');
-
-    return this.prisma.tutorProfile.update({
-      where: {
-        userId: userId,
-      },
-      data: {
-        ...dto,
-      },
+      data: { userId: userId, ...dto },
     });
   }
 
