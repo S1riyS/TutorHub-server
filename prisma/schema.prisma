@@ -43,17 +43,26 @@ model TutorProfile {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  bio             String?
-  birthDate       DateTime         @map("birth_date")
   teachingFormats TeachingFormat[]
-  careerStartYear Int
-
-  achievements TutorAchievement[]
+  details         TutorDetails?
+  achievements    TutorAchievement[]
 
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique @map("user_id")
 
   @@map("tutor_profiles")
+}
+
+model TutorDetails {
+  id              String   @id @default(uuid())
+  bio             String?
+  birthDate       DateTime @map("birth_date")
+  careerStartYear Int
+
+  profile   TutorProfile @relation(fields: [profileId], references: [id])
+  profileId String       @unique @map("profile_id")
+
+  @@map("tutor_details")
 }
 
 model TutorAchievement {
