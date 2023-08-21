@@ -23,6 +23,7 @@ import {
   TutorDeleteAchievementSwaggerDecorator,
   TutorFindOneSwaggerDecorator,
   TutorUpdateAchievementSwaggerDecorator,
+  TutorUpdateDetailsSwaggerDecorator,
 } from '@common/decorators/swagger';
 import { Role } from '@prisma/client';
 import { UpdateDetailsDTO } from '@tutor/dto/details.dto';
@@ -43,6 +44,7 @@ export class TutorController {
 
   @Patch('self/details')
   @Roles(Role.TUTOR)
+  @TutorUpdateDetailsSwaggerDecorator()
   async updateDetails(@CurrentUser('id') userId: string, @Body() dto: UpdateDetailsDTO) {
     const details = await this.tutorService.updateDetails(userId, dto);
     return new DetailsResponse(details);

@@ -9,8 +9,8 @@ import {
   ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
-import { AchievementResponse, FullTutorProfileResponse } from '@tutor/responses';
-import { CreateAchievementDTO, UpdateAchievementDTO } from '@tutor/dto';
+import { AchievementResponse, DetailsResponse, FullTutorProfileResponse } from '@tutor/responses';
+import { CreateAchievementDTO, UpdateAchievementDTO, UpdateDetailsDTO } from '@tutor/dto';
 import { DeleteResponse } from '@common/responses';
 
 export function TutorFindOneSwaggerDecorator() {
@@ -18,6 +18,16 @@ export function TutorFindOneSwaggerDecorator() {
     ApiOperation({ summary: "Retrieves tutor's profile with given userID" }),
     ApiOkResponse({ type: FullTutorProfileResponse }),
     ApiNotFoundResponse({ description: 'User not found' }),
+  );
+}
+
+export function TutorUpdateDetailsSwaggerDecorator() {
+  return applyDecorators(
+    ApiOperation({ summary: 'Updates details of tutor profile (bio, date of birth, etc)' }),
+    ApiBody({ type: UpdateDetailsDTO }),
+    ApiOkResponse({ type: DetailsResponse }),
+    ApiForbiddenResponse({ description: 'Access denied' }),
+    ApiNotFoundResponse({ description: "Tutor's profile not found" }),
   );
 }
 
