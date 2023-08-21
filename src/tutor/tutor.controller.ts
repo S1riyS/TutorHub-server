@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { TutorService } from './tutor.service';
 import { CreateAchievementDTO, UpdateAchievementDTO } from './dto';
-import { AchievementResponse, FullTutorProfileResponse } from './responses';
+import { AchievementResponse, DetailsResponse, FullTutorProfileResponse } from './responses';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUser, Public, Roles } from '@common/decorators';
 import {
@@ -25,6 +25,7 @@ import {
   TutorUpdateAchievementSwaggerDecorator,
 } from '@common/decorators/swagger';
 import { Role } from '@prisma/client';
+import { UpdateDetailsDTO } from '@tutor/dto/details.dto';
 
 @Controller('tutors')
 @ApiTags('Tutors')
@@ -38,6 +39,13 @@ export class TutorController {
   async findOne(@Param('userId', ParseUUIDPipe) userId: string) {
     const profile = await this.tutorService.findOneProfile(userId, true);
     return new FullTutorProfileResponse(profile);
+  }
+
+  @Patch('self/details')
+  @Roles(Role.TUTOR)
+  async updateDetails(@CurrentUser('id') userId: string, @Body() dto: UpdateDetailsDTO) {
+    const details = await this.tutorService.updateDetails(userId, dto);
+    return new DetailsResponse(details);
   }
 
   @Post('self/achievements')

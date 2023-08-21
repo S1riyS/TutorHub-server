@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
-import { CreateAchievementDTO, UpdateAchievementDTO } from './dto';
-import { TutorAchievement, TutorProfile } from '@prisma/client';
+import { CreateAchievementDTO, UpdateAchievementDTO, UpdateDetailsDTO } from './dto';
+import { TutorAchievement, TutorDetails, TutorProfile } from '@prisma/client';
 
 @Injectable()
 export class TutorService {
@@ -27,6 +27,14 @@ export class TutorService {
           create: {},
         },
       },
+    });
+  }
+
+  async updateDetails(userId: string, dto: UpdateDetailsDTO): Promise<TutorDetails> {
+    const profile = await this.checkUserProfileRelation(userId);
+    return this.prisma.tutorDetails.update({
+      where: { profileId: profile.id },
+      data: { ...dto },
     });
   }
 
