@@ -7,7 +7,7 @@ import { REFRESH_TOKEN_COOKIE_NAME } from '@common/constants';
 
 const styles = fs.readFileSync(path.join(__dirname, '../src/swaggerDark.min.css'), 'utf8');
 
-async function swaggerSetup(app: INestApplication) {
+async function swaggerSetup(app: INestApplication, isJSONToBeGenerated: boolean = false) {
   const JWTOptions: SecuritySchemeObject = {
     type: 'http',
     scheme: 'bearer',
@@ -33,6 +33,10 @@ async function swaggerSetup(app: INestApplication) {
   SwaggerModule.setup('/docs', app, document, {
     customCss: `${styles}`,
   });
+
+  if (isJSONToBeGenerated) {
+    fs.writeFileSync('./swagger-spec.json', JSON.stringify(document));
+  }
 }
 
 export default swaggerSetup;
