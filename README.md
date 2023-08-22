@@ -103,3 +103,18 @@ npm run start:dev
 [GitHub-Actions-link]: https://docs.github.com/en/actions
 
 [GitHub-Actions-logo]: https://img.shields.io/badge/GitHub%20Actions-2f6ee6?style=for-the-badge&logo=githubactions&logoColor=white
+
+## 🗺️ Roadmap
+
+- [ ] Major features:
+    - [x] Authorization and authentication
+    - [x] The logic of the division into students and teachers
+    - [ ] Lessons pricing
+    - [ ] Schedules both for tutors and students
+    - [ ] Search filters
+    - [ ] The system of issuing and submitting homework assignments
+    - [ ] Email notifications (password confirmation, )
+
+- [ ] Testing
+- [ ] Deployment
+- [x] Automatic generation of documentation via GitHub Actions ([result](https://s1riys.github.io/TutorHub-server/))
