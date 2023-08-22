@@ -96,6 +96,18 @@ npm run start:dev
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## 💬 Contacts
+
+**Ankudinov Kirill** - [kirill.ankudinov.94@mail.ru](mailto:kirill.ankudinov.94@mail.ru)
+
+My social medias:
+
+[![Vkontakte](https://img.shields.io/badge/-Vkontakte-090909?style=for-the-badge&logo=Vk&logoColor=4F7DB3)](https://vk.com/s1riys)
+[![Discord](https://img.shields.io/badge/-Discord-090909?style=for-the-badge&logo=discord)](https://discordapp.com/users/380736129361772548/)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
 [//]: # (LINKS)
 
 [NodeJS-logo]: https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white
