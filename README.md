@@ -38,7 +38,10 @@ this time
 $ yarn install
 ```
 
-### Running the app (in development mode)
+### Running the app
+
+> [!NOTE]
+> Commands below are for running app in development mode
 
 ```bash
 $ npx prisma migrate dev
