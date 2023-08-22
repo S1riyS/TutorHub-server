@@ -39,7 +39,7 @@ export class UserService {
     });
   }
 
-  async findOne(idOrEmail: string, throwWhenNotFound: boolean = false): Promise<User | null> {
+  async findOne(idOrEmail: string, throwWhenNotFound = false): Promise<User | null> {
     const user = await this.prisma.user.findFirst({
       where: {
         OR: [{ id: idOrEmail }, { email: idOrEmail }],

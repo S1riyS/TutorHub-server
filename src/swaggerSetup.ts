@@ -7,7 +7,7 @@ import { REFRESH_TOKEN_COOKIE_NAME } from '@common/constants';
 
 const styles = fs.readFileSync(path.join(__dirname, '../src/swaggerDark.min.css'), 'utf8');
 
-async function swaggerSetup(app: INestApplication, isJSONToBeGenerated: boolean = false) {
+async function swaggerSetup(app: INestApplication, isJSONToBeGenerated = false) {
   const JWTOptions: SecuritySchemeObject = {
     type: 'http',
     scheme: 'bearer',
