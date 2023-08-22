@@ -48,8 +48,11 @@ yarn install
 
 ### 3. Set up `.env` file:
 
-This project uses `.env` file for configuration. In order to find out, what exactly must be there, check out
-`.env.example` *([link to file](https://github.com/S1riyS/TutorHub-server/blob/master/.env.example))*.
+This project uses `.env` file for configuration.
+
+In order to find out, what exactly must be there, check out
+[`.env.example`](https://github.com/S1riyS/TutorHub-server/blob/master/.env.example).
+
 > [!IMPORTANT]
 > Put `.env` file in the root of the project
 
