@@ -49,3 +49,39 @@ $ npm run start:dev
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 [GitHub-repo-link]: https://github.com/S1riyS/TutorHub-server
+
+## 🛠️ Built With
+
+* [![NodeJS][NodeJS-logo]][NodeJS-link]
+* [![NestJS][NestJS-logo]][NestJS-link]
+* [![Prisma][Prisma-logo]][Prisma-link]
+* [![Postgres][Postgres-logo]][Postgres-link]
+* [![Swagger][Swagger-logo]][Swagger-link]
+* [![GitHub-Actions][GitHub-Actions-logo]][GitHub-Actions-link]
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+[NodeJS-logo]: https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white
+
+[NodeJS-link]: https://nodejs.org/en/about
+
+[NestJS-logo]: https://img.shields.io/badge/Nest.JS-e0234e?style=for-the-badge&logo=nestjs&logoColor=white
+
+[NestJS-link]: https://docs.nestjs.com/
+
+[Prisma-logo]: https://img.shields.io/badge/prisma-5a67d8?style=for-the-badge&logo=prisma&logoColor=white
+
+[Prisma-link]: https://www.prisma.io/
+
+[Postgres-logo]: https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white
+
+[Postgres-link]: https://www.postgresql.org/about/
+
+[Swagger-logo]: https://img.shields.io/badge/swagger-82e62d?style=for-the-badge&logo=swagger&logoColor=173647
+
+[Swagger-link]: https://swagger.io/
+
+[GitHub-Actions-link]: https://docs.github.com/en/actions
+
+[GitHub-Actions-logo]: https://img.shields.io/badge/GitHub%20Actions-2f6ee6?style=for-the-badge&logo=githubactions&logoColor=white
