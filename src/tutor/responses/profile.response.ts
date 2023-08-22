@@ -1,8 +1,8 @@
-import { TutorProfileEntity } from '../entities';
-import { AchievementResponse } from './achievement.response';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { DetailsResponse } from '@tutor/responses';
+import { TutorProfileEntity } from '../entities';
+import { AchievementResponse } from './achievement.response';
+import { DetailsResponse } from './details.response';
 
 export class FullTutorProfileResponse extends TutorProfileEntity {
   @Type(() => DetailsResponse)
