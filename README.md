@@ -4,7 +4,7 @@
 <br/>
 <div align="center">
     <a href="https://github.com/S1riyS/TutorHub-server">
-        <img src="https://i.postimg.cc/tgW3V754/rounded-in-photoretrica-1.png" alt="Logo" width="80" height="80">
+        <img src="https://i.postimg.cc/QMccxrR7/rounded-in-photoretrica.png" alt="Logo" width="140" height="140">
     </a>
     <h3 align="center">TutorHub</h3>
     <p align="center">
@@ -15,7 +15,7 @@
 
 ## 📝 About The Project
 
-[**TutorHub**](https://github.com/S1riyS/TutorHub-server) - is a platform where students and teachers can find each
+[**TutorHub**][GitHub-repo-link] - is a platform where students and teachers can find each
 other. Here you can assign lessons, conveniently give and accomplish homework.
 
 Platform has a lot of search parameters:
@@ -48,3 +48,4 @@ $ npm run start:dev
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+[GitHub-repo-link]: https://github.com/S1riyS/TutorHub-server
