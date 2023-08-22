@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from '@prisma/prisma.module';
 import { UserModule } from '@user/user.module';
-import { TutorModule } from './tutor/tutor.module';
-import { StudentModule } from './student/student.module';
-import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { SubjectModule } from './subject/subject.module';
+import { AuthModule } from '@auth/auth.module';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard';
+import { TutorModule } from '@tutor/tutor.module';
+import { StudentModule } from '@student/student.module';
 
 @Module({
   imports: [
@@ -19,7 +18,6 @@ import { SubjectModule } from './subject/subject.module';
     TutorModule,
     StudentModule,
     AuthModule,
-    SubjectModule,
   ],
   providers: [
     {
