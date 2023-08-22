@@ -10,8 +10,9 @@
     </a>
     <h3 align="center">TutorHub</h3>
     <p align="center">
-        <a href="https://s1riys.github.io/TutorHub-server/">
-        <strong>Explore the API docs »</strong></a>
+        <a href="https://s1riys.github.io/TutorHub-server/" target="_blank" rel="noopener noreferrer">
+            <strong>Explore the API docs »</strong>
+        </a>
     </p>
 </div>
 
