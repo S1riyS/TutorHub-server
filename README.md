@@ -1,5 +1,7 @@
 <div id="readme-top"></div>
 
+[![Swagger docs](https://github.com/S1riyS/TutorHub-server/actions/workflows/swagger.yml/badge.svg?branch=master&style=flat)](https://github.com/S1riyS/TutorHub-server/actions/workflows/swagger.yml)
+
 [//]: # (Project logo)
 <br/>
 <div align="center">
@@ -32,13 +34,13 @@ this time
 
 ## ⬇ Installation
 
-### Dependencies
+### 1. Dependencies
 
 ```bash
 $ yarn install
 ```
 
-### Running the app
+### 2. Running the app
 
 > [!NOTE]
 > Commands below are for running app in development mode
