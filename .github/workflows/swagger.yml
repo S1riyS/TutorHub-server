@@ -5,8 +5,7 @@ on:
   schedule:
     - cron: '* * * 1,4,7,10 *'
   push:
-    # TODO: Delete feature/swagger-github-actions branch
-    branches: [ master, feature/swagger-github-actions ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
