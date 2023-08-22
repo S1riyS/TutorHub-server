@@ -55,14 +55,14 @@ This project uses `.env` file for configuration. In order to find out, what exac
 
 ### 4. Run the app
 
-> [!NOTE]
-> Commands below are for running app in development mode
-
 ```bash
 npx prisma migrate dev
 npx prisma generate
 npm run start:dev
 ```
+
+> [!NOTE]
+> Commands above are for running app in development mode
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
