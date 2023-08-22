@@ -1,6 +1,7 @@
 <div id="readme-top"></div>
 
 [![Swagger docs](https://github.com/S1riyS/TutorHub-server/actions/workflows/swagger.yml/badge.svg?branch=master&style=flat)](https://github.com/S1riyS/TutorHub-server/actions/workflows/swagger.yml)
+[![CodeFactor](https://www.codefactor.io/repository/github/s1riys/tutorhub-server/badge/master)](https://www.codefactor.io/repository/github/s1riys/tutorhub-server/overview/master)
 
 [//]: # (Project logo)
 <br/>
