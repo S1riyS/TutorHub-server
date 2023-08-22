@@ -11,8 +11,26 @@ on:
     branches: [ master ]
 
 jobs:
+
   generate-swagger-spec:
     runs-on: ubuntu-latest
+
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          # Maps TCP port 5432 on service container to the host
+          - 5432:5432
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tutor_hub
+
     steps:
       - uses: actions/checkout@v3
 
@@ -25,6 +43,16 @@ jobs:
         uses: borales/actions-yarn@v4.2.0
         with:
           cmd: install
+
+      - name: Set up .env file
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_PORT: 3000
+          envkey_DATABASE_URL: $DATABASE_URL
+          envkey_JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          envkey_JWT_ACCESS_EXP: 10m
+          envkey_JWT_REFRESH_EXP_MONTHS: 2
+          file_name: .env
 
       - name: Generate swagger-spec.json
         run: yarn start:swagger-only
