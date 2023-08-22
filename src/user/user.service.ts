@@ -5,22 +5,28 @@ import { genSalt, hash } from 'bcrypt';
 import { CreateUserDTO, UpdateUserDTO } from '@user/dto';
 import { DeleteResponse } from '@user/responses';
 import { JwtPayload } from '@auth/interfaces';
+import { TutorService } from '@tutor/tutor.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly tutorService: TutorService,
+  ) {}
 
   async create(user: CreateUserDTO): Promise<User> {
     const candidate = await this.findOne(user.email);
     if (candidate) throw new BadRequestException('User with this credentials already exists');
 
     const hashedPassword = await this.hashPassword(user.password);
-    return this.prisma.user.create({
-      data: {
-        ...user,
-        password: hashedPassword,
-      },
+    const newUser = await this.prisma.user.create({
+      data: { ...user, password: hashedPassword },
     });
+
+    // Creating profile for tutor
+    if (user.role === Role.TUTOR) await this.tutorService.createProfile(newUser.id);
+
+    return newUser;
   }
 
   async update(id: string, user: UpdateUserDTO): Promise<User> {

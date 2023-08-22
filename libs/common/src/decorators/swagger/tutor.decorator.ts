@@ -1,6 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
@@ -9,10 +8,13 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
 } from '@nestjs/swagger';
-import { AchievementResponse, FullTutorProfileResponse, TutorProfileResponse } from '@tutor/responses';
-import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO, UpdateTutorProfileDTO } from '@tutor/dto';
+import { AchievementResponse, DetailsResponse, FullTutorProfileResponse } from '@tutor/responses';
+import { CreateAchievementDTO, UpdateAchievementDTO, UpdateDetailsDTO } from '@tutor/dto';
 import { DeleteResponse } from '@common/responses';
+import { TeachingFormat } from '@prisma/client';
+import { TeachingFormatsResponse } from '@tutor/responses/teaching-formats.response';
 
 export function TutorFindOneSwaggerDecorator() {
   return applyDecorators(
@@ -22,27 +24,24 @@ export function TutorFindOneSwaggerDecorator() {
   );
 }
 
-export function TutorCreateProfileSwaggerDecorator() {
+export function TutorUpdateDetailsSwaggerDecorator() {
   return applyDecorators(
-    ApiOperation({ summary: 'Creates profile for authorized tutor' }),
-    ApiBody({ type: CreateTutorProfileDTO }),
-    ApiCreatedResponse({ type: TutorProfileResponse }),
-    ApiBadRequestResponse({ description: 'This tutor already has a profile' }),
-    ApiForbiddenResponse({ description: 'User is not tutor' }),
-    ApiNotFoundResponse({ description: 'User not found' }),
-    ApiBearerAuth('JWT-auth'),
+    ApiOperation({ summary: 'Updates details of tutor profile (bio, date of birth, etc)' }),
+    ApiBody({ type: UpdateDetailsDTO }),
+    ApiOkResponse({ type: DetailsResponse }),
+    ApiForbiddenResponse({ description: 'Access denied' }),
   );
 }
 
-export function TutorUpdateProfileSwaggerDecorator() {
+export function TutorToggleTeachingFormatSwaggerDecorator() {
   return applyDecorators(
-    ApiOperation({ summary: 'Updates profile of authorized tutor' }),
-    ApiBody({ type: UpdateTutorProfileDTO }),
-    ApiOkResponse({ type: TutorProfileResponse }),
-    ApiBadRequestResponse({ description: 'This user does not have a profile' }),
-    ApiForbiddenResponse({ description: "Profile can't be updated" }),
-    ApiNotFoundResponse({ description: 'User not found' }),
-    ApiBearerAuth('JWT-auth'),
+    ApiOperation({
+      summary: 'Adds or removes available teaching formats (eg REMOTELY)',
+      description: 'If tutor already has this teaching format, it will be removed, otherwise it will be added',
+    }),
+    ApiQuery({ name: 'format', enum: TeachingFormat }),
+    ApiOkResponse({ type: TeachingFormatsResponse }),
+    ApiForbiddenResponse({ description: 'Access denied' }),
   );
 }
 
@@ -52,7 +51,6 @@ export function TutorAddAchievementSwaggerDecorator() {
     ApiBody({ type: CreateAchievementDTO }),
     ApiOperation({ summary: 'Creates new achievement for authorized tutor' }),
     ApiCreatedResponse({ type: AchievementResponse }),
-    ApiNotFoundResponse({ description: "Tutor's profile not found" }),
     ApiBearerAuth('JWT-auth'),
   );
 }
@@ -64,7 +62,7 @@ export function TutorUpdateAchievementSwaggerDecorator() {
     ApiBody({ type: UpdateAchievementDTO }),
     ApiOkResponse({ type: AchievementResponse }),
     ApiForbiddenResponse({ description: 'Confirmed achievement can not be updated' }),
-    ApiNotFoundResponse({ description: "Tutor's profile not found or This tutor does not have such an achievement" }),
+    ApiNotFoundResponse({ description: 'This tutor does not have such an achievement' }),
     ApiBearerAuth('JWT-auth'),
   );
 }
@@ -73,7 +71,7 @@ export function TutorDeleteAchievementSwaggerDecorator() {
   return applyDecorators(
     ApiOperation({ summary: 'Deletes achievement of authorized tutor' }),
     ApiOkResponse({ type: DeleteResponse }),
-    ApiNotFoundResponse({ description: "Tutor's profile not found or This tutor does not have such an achievement" }),
+    ApiNotFoundResponse({ description: 'This tutor does not have such an achievement' }),
     ApiBearerAuth('JWT-auth'),
   );
 }
@@ -85,7 +83,7 @@ export function TutorConfirmAchievementSwaggerDecorator() {
       description: 'Sets isConfirmed field of achievement to TRUE (ADMIN ONLY)',
     }),
     ApiOkResponse({ type: AchievementResponse }),
-    ApiNotFoundResponse({ description: "Tutor's profile not found or This tutor does not have such an achievement" }),
+    ApiNotFoundResponse({ description: 'This tutor does not have such an achievement' }),
     ApiBearerAuth('JWT-auth'),
   );
 }

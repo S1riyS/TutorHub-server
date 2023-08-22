@@ -7,26 +7,29 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseEnumPipe,
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseInterceptors,
 } from '@nestjs/common';
 import { TutorService } from './tutor.service';
-import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO, UpdateTutorProfileDTO } from './dto';
-import { AchievementResponse, FullTutorProfileResponse, TutorProfileResponse } from './responses';
+import { CreateAchievementDTO, UpdateAchievementDTO } from './dto';
+import { AchievementResponse, DetailsResponse, FullTutorProfileResponse } from './responses';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUser, Public, Roles } from '@common/decorators';
 import {
   TutorAddAchievementSwaggerDecorator,
   TutorConfirmAchievementSwaggerDecorator,
-  TutorCreateProfileSwaggerDecorator,
   TutorDeleteAchievementSwaggerDecorator,
   TutorFindOneSwaggerDecorator,
+  TutorToggleTeachingFormatSwaggerDecorator,
   TutorUpdateAchievementSwaggerDecorator,
-  TutorUpdateProfileSwaggerDecorator,
+  TutorUpdateDetailsSwaggerDecorator,
 } from '@common/decorators/swagger';
-import { Role } from '@prisma/client';
+import { Role, TeachingFormat } from '@prisma/client';
+import { UpdateDetailsDTO } from '@tutor/dto/details.dto';
 
 @Controller('tutors')
 @ApiTags('Tutors')
@@ -42,21 +45,22 @@ export class TutorController {
     return new FullTutorProfileResponse(profile);
   }
 
-  @Post('self/profile')
+  @Patch('self/details')
   @Roles(Role.TUTOR)
-  @HttpCode(HttpStatus.CREATED)
-  @TutorCreateProfileSwaggerDecorator()
-  async createProfile(@CurrentUser('id') userId: string, @Body() dto: CreateTutorProfileDTO) {
-    const profile = await this.tutorService.createProfile(userId, dto);
-    return new TutorProfileResponse(profile);
+  @TutorUpdateDetailsSwaggerDecorator()
+  async updateDetails(@CurrentUser('id') userId: string, @Body() dto: UpdateDetailsDTO) {
+    const details = await this.tutorService.updateDetails(userId, dto);
+    return new DetailsResponse(details);
   }
 
-  @Patch('self/profile')
+  @Post('self/toggle-teaching-format')
   @Roles(Role.TUTOR)
-  @TutorUpdateProfileSwaggerDecorator()
-  async updateProfile(@CurrentUser('id') userId: string, @Body() dto: UpdateTutorProfileDTO) {
-    const updatedProfile = await this.tutorService.updateProfile(userId, dto);
-    return new TutorProfileResponse(updatedProfile);
+  @TutorToggleTeachingFormatSwaggerDecorator()
+  async toggleTeachingFormat(
+    @CurrentUser('id') userId: string,
+    @Query('format', new ParseEnumPipe(TeachingFormat)) format: TeachingFormat,
+  ) {
+    return this.tutorService.toggleTeachingFormat(userId, format);
   }
 
   @Post('self/achievements')

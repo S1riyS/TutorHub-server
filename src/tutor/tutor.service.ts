@@ -1,62 +1,52 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
-import { UserService } from '@user/user.service';
-import { CreateAchievementDTO, CreateTutorProfileDTO, UpdateAchievementDTO, UpdateTutorProfileDTO } from './dto';
-import { TutorAchievement, TutorProfile } from '@prisma/client';
+import { CreateAchievementDTO, UpdateAchievementDTO, UpdateDetailsDTO } from './dto';
+import { TeachingFormat, TutorAchievement, TutorDetails, TutorProfile } from '@prisma/client';
+import { toggleArrayValue } from '@common/utils';
 
 @Injectable()
 export class TutorService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async findOneProfile(userId) {
-    const profile = await this.prisma.tutorProfile.findUnique({
+  async findOneProfile(userId: string): Promise<TutorProfile | null> {
+    return this.prisma.tutorProfile.findUnique({
       where: { userId: userId },
-      include: { achievements: true },
+      include: { achievements: true, details: true },
     });
-    if (!profile) throw new NotFoundException('Profile not found');
-    return profile;
   }
 
-  async createProfile(userId: string, dto: CreateTutorProfileDTO) {
-    const candidate = await this.userService.findOne(userId);
-    if (!candidate) throw new NotFoundException('User not found');
-
-    const profileExists = await this.prisma.tutorProfile.findFirst({
-      where: {
-        userId: userId,
-      },
-    });
-    if (profileExists) throw new BadRequestException('This user already has a profile');
-
+  async createProfile(userId: string): Promise<TutorProfile> {
     return this.prisma.tutorProfile.create({
       data: {
         userId: userId,
-        ...dto,
+        details: {
+          create: {},
+        },
       },
     });
   }
 
-  async updateProfile(userId: string, dto: UpdateTutorProfileDTO) {
-    // Checking if user exists
-    await this.userService.findOne(userId, true);
+  async updateDetails(userId: string, dto: UpdateDetailsDTO): Promise<TutorDetails> {
+    const profile = await this.checkUserProfileRelation(userId);
+    return this.prisma.tutorDetails.update({
+      where: { profileId: profile.id },
+      data: { ...dto },
+    });
+  }
 
-    // Checking if user has tutor profile
-    const profileExists = await this.prisma.tutorProfile.findFirst({
+  async toggleTeachingFormat(userId: string, format: TeachingFormat): Promise<TeachingFormat[]> {
+    const profile = await this.prisma.tutorProfile.findUnique({
       where: { userId: userId },
+      select: { teachingFormats: true },
     });
-    if (!profileExists) throw new BadRequestException('This user does not have a profile');
 
-    return this.prisma.tutorProfile.update({
-      where: {
-        userId: userId,
-      },
-      data: {
-        ...dto,
-      },
+    const updatedTeachingFormats = toggleArrayValue<TeachingFormat>(profile.teachingFormats, format);
+    await this.prisma.tutorProfile.update({
+      where: { userId: userId },
+      data: { teachingFormats: updatedTeachingFormats },
     });
+
+    return updatedTeachingFormats;
   }
 
   async addAchievement(userId: string, dto: CreateAchievementDTO): Promise<TutorAchievement> {
