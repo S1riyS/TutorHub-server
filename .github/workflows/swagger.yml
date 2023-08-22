@@ -1,0 +1,85 @@
+name: 'Swagger - Github Pages'
+
+on:
+  # Runs this workflow every 90 days, so artifacts are alive
+  schedule:
+    - cron: '* * * 1,4,7,10 *'
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  generate-swagger-spec:
+    runs-on: ubuntu-latest
+
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          # Maps TCP port 5432 on service container to the host
+          - 5432:5432
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tutor_hub
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'yarn'
+
+      - name: Install dependencies
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: install
+
+      - name: Set up .env file
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_PORT: 3000
+          envkey_DATABASE_URL: $DATABASE_URL
+          envkey_JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          envkey_JWT_ACCESS_EXP: 10m
+          envkey_JWT_REFRESH_EXP_MONTHS: 2
+          file_name: .env
+
+      - name: Generate swagger-spec.json
+        run: yarn start:swagger-only
+
+      - name: Upload swagger-spec.json
+        uses: actions/upload-artifact@v3
+        with:
+          name: spec-file
+          path: swagger-spec.json
+
+  deploy:
+    needs: generate-swagger-spec
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download swagger-spec.json
+        uses: actions/download-artifact@v3
+        with:
+          name: spec-file
+
+      - name: Generate Swagger UI
+        uses: Legion2/swagger-ui-action@v1
+        with:
+          output: swagger-ui
+          spec-file: swagger-spec.json
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: swagger-ui
