@@ -1,7 +1,7 @@
 name: 'Swagger - Github Pages'
 
 on:
-  # Runs this workflow every 90 days, so artifacts are alive.
+  # Runs this workflow every 90 days, so artifacts are alive
   schedule:
     - cron: '* * * 1,4,7,10 *'
   push:
