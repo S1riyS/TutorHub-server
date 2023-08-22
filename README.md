@@ -92,7 +92,6 @@ npm run start:dev
     - [ ] Search filters
     - [ ] The system of issuing and submitting homework assignments
     - [ ] Email notifications (password confirmation, reminders, etc)
-
 - [ ] Testing
 - [ ] Deployment
 - [x] Automatic generation of documentation via GitHub Actions ([result](https://s1riys.github.io/TutorHub-server/))
