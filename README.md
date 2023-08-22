@@ -32,23 +32,36 @@ this time
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## ⬇ Installation
+## 🚀 Getting started
 
-### 1. Dependencies
+### 1. Clone a repo
 
 ```bash
-$ yarn install
+git clone https://github.com/S1riyS/TutorHub-server.git
 ```
 
-### 2. Running the app
+### 2. Install dependencies
+
+```bash
+yarn install
+```
+
+### 3. Set up `.env` file:
+
+This project uses `.env` file for configuration. In order to find out, what exactly must be there, check out
+`.env.example` *([link to file](https://github.com/S1riyS/TutorHub-server/blob/master/.env.example))*.
+> [!IMPORTANT]
+> Put `.env` file in the root of the project
+
+### 4. Run the app
 
 > [!NOTE]
 > Commands below are for running app in development mode
 
 ```bash
-$ npx prisma migrate dev
-$ npx prisma generate
-$ npm run start:dev
+npx prisma migrate dev
+npx prisma generate
+npm run start:dev
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
