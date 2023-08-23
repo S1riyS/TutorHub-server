@@ -8,7 +8,7 @@ import { DeleteResponse } from '@common/responses';
 export class SubjectService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getOne(subjectIdOrName: string, throwWhenNotFound = false): Promise<Subject & { topics: Topic[] }> {
+  async getOneSubject(subjectIdOrName: string, throwWhenNotFound = false): Promise<Subject & { topics: Topic[] }> {
     const subject = await this.prisma.subject.findFirst({
       where: {
         OR: [{ id: subjectIdOrName }, { name: subjectIdOrName }],
@@ -23,12 +23,12 @@ export class SubjectService {
     return subject;
   }
 
-  async getAll(): Promise<Subject[]> {
+  async getAllSubjects(): Promise<Subject[]> {
     return this.prisma.subject.findMany();
   }
 
   async createSubject(dto: CreateSubjectDTO): Promise<Subject> {
-    const candidate = await this.getOne(dto.name);
+    const candidate = await this.getOneSubject(dto.name);
     if (candidate) throw new BadRequestException('Subject with this name already exists');
 
     return this.prisma.subject.create({
@@ -37,7 +37,7 @@ export class SubjectService {
   }
 
   async updateSubject(subjectId: string, dto: UpdateSubjectDTO): Promise<Subject> {
-    await this.getOne(subjectId, true);
+    await this.getOneSubject(subjectId, true);
 
     return this.prisma.subject.update({
       where: { id: subjectId },

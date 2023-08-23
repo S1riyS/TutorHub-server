@@ -11,35 +11,35 @@ export class SubjectController {
 
   @Get(':subjectId')
   @Public()
-  async getOne(@Param('subjectId') subjectId: string) {
-    const subject = await this.subjectService.getOne(subjectId);
+  async getOneSubject(@Param('subjectId') subjectId: string) {
+    const subject = await this.subjectService.getOneSubject(subjectId);
     return new FullSubjectResponse(subject);
   }
 
   @Get()
   @Public()
-  async getAll() {
-    const subjects = await this.subjectService.getAll();
+  async getAllSubject() {
+    const subjects = await this.subjectService.getAllSubjects();
     return subjects.map((subject: Subject) => new SubjectResponse(subject));
   }
 
   @Post()
   @Roles(Role.ADMIN)
-  async add(@Body() dto: CreateSubjectDTO) {
+  async addSubject(@Body() dto: CreateSubjectDTO) {
     const subject = await this.subjectService.createSubject(dto);
     return new SubjectResponse(subject);
   }
 
   @Patch(':subjectId')
   @Roles(Role.ADMIN)
-  async update(@Param('subjectId') subjectId: string, @Body() dto: UpdateSubjectDTO) {
+  async updateSubject(@Param('subjectId') subjectId: string, @Body() dto: UpdateSubjectDTO) {
     const subject = await this.subjectService.updateSubject(subjectId, dto);
     return new SubjectResponse(subject);
   }
 
   @Delete(':subjectId')
   @Roles(Role.ADMIN)
-  async delete(@Param('subjectId') subjectId: string) {
+  async deleteSubject(@Param('subjectId') subjectId: string) {
     return this.subjectService.deleteSubject(subjectId);
   }
 }
