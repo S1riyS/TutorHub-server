@@ -7,6 +7,7 @@ import { AuthModule } from '@auth/auth.module';
 import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard';
 import { TutorModule } from '@tutor/tutor.module';
 import { StudentModule } from '@student/student.module';
+import { SubjectModule } from '@subject/subject.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { StudentModule } from '@student/student.module';
     UserModule,
     TutorModule,
     StudentModule,
+    SubjectModule,
     AuthModule,
   ],
   providers: [
