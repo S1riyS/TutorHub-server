@@ -13,7 +13,11 @@ class UserExistsRule implements ValidatorConstraintInterface {
   private readonly englishRegExp = /^[A-Za-z0-9]*$/;
 
   async validate(value: string) {
-    return this.englishRegExp.test(value);
+    try {
+      return this.englishRegExp.test(value);
+    } catch (e) {
+      return false;
+    }
   }
 
   defaultMessage(args: ValidationArguments) {
