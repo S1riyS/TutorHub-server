@@ -8,9 +8,11 @@ import { DeleteResponse } from '@common/responses';
 export class SubjectService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getOne(subjectId: string, throwWhenNotFound = false): Promise<Subject & { topics: Topic[] }> {
-    const subject = await this.prisma.subject.findUnique({
-      where: { id: subjectId },
+  async getOne(subjectIdOrName: string, throwWhenNotFound = false): Promise<Subject & { topics: Topic[] }> {
+    const subject = await this.prisma.subject.findFirst({
+      where: {
+        OR: [{ id: subjectIdOrName }, { name: subjectIdOrName }],
+      },
       include: { topics: true },
     });
 
