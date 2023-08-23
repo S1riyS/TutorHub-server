@@ -48,6 +48,12 @@
       "@student/*": [
         "src/student/*"
       ],
+      "@subject": [
+        "src/subject"
+      ],
+      "@subject/*": [
+        "src/subject/*"
+      ],
       "@common": [
         "libs/common/src"
       ],
