@@ -87,21 +87,19 @@ model StudentProfile {
 }
 
 model Subject {
-  id         String  @id @default(uuid())
-  name       String  @unique
-  nameForURL String  @unique
-  topics     Topic[]
+  id     String  @id @default(uuid())
+  name   String  @unique
+  topics Topic[]
 }
 
 model Topic {
-  id         String  @id @default(uuid())
-  name       String
-  nameForURL String
-  subject    Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  id      String  @id @default(uuid())
+  name    String
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
 
   subjectId String
 
-  @@unique([subjectId, nameForURL], name: "SubjectId_TopicName")
+  @@unique([subjectId, name], name: "SubjectId_name")
 }
 
 enum TeachingFormat {
