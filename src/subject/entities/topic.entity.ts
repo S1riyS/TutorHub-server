@@ -1,7 +1,6 @@
 import { Topic } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { IsInEnglish } from '@common/validators';
 import { Exclude } from 'class-transformer';
 
 export class TopicEntity implements Topic {
@@ -12,12 +11,6 @@ export class TopicEntity implements Topic {
   @IsString()
   @ApiProperty({ example: 'Подготовка к ЕГЭ' })
   name: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsInEnglish()
-  @ApiProperty({ example: 'ege-preparation' })
-  nameForURL: string;
 
   @Exclude()
   subjectId: string;

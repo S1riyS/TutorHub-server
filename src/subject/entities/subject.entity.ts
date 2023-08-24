@@ -12,10 +12,4 @@ export class SubjectEntity implements Subject {
   @Transform((param) => param.value.charAt(0).toUpperCase() + param.value.slice(1))
   @ApiProperty({ example: 'Английский' })
   name: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @Transform((param) => param.value.toLowerCase())
-  @ApiProperty({ example: 'english' })
-  nameForURL: string;
 }
