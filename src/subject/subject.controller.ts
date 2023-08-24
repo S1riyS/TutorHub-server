@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
 import { SubjectService } from '@subject/subject.service';
 import { Role, Subject } from '@prisma/client';
 import { FullSubjectResponse, SubjectResponse } from '@subject/responses';
@@ -11,7 +11,7 @@ export class SubjectController {
 
   @Get(':subjectId')
   @Public()
-  async getOneSubject(@Param('subjectId') subjectId: string) {
+  async getOneSubject(@Param('subjectId', ParseUUIDPipe) subjectId: string) {
     const subject = await this.subjectService.getOneSubject(subjectId);
     return new FullSubjectResponse(subject);
   }
@@ -32,14 +32,14 @@ export class SubjectController {
 
   @Patch(':subjectId')
   @Roles(Role.ADMIN)
-  async updateSubject(@Param('subjectId') subjectId: string, @Body() dto: UpdateSubjectDTO) {
+  async updateSubject(@Param('subjectId', ParseUUIDPipe) subjectId: string, @Body() dto: UpdateSubjectDTO) {
     const subject = await this.subjectService.updateSubject(subjectId, dto);
     return new SubjectResponse(subject);
   }
 
   @Delete(':subjectId')
   @Roles(Role.ADMIN)
-  async deleteSubject(@Param('subjectId') subjectId: string) {
+  async deleteSubject(@Param('subjectId', ParseUUIDPipe) subjectId: string) {
     return this.subjectService.deleteSubject(subjectId);
   }
 }
